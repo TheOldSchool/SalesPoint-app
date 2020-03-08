@@ -8,32 +8,11 @@
 
     <h6 class="text-info">Platos principales</h6>
     <ul class="list-group list-group-flush">
-      <li class="list-group-item list-group-item-action">
-        <button class="btn-action">
-          <img src="https://image.flaticon.com/icons/svg/1046/1046857.svg"
+      <li class="list-group-item list-group-item-action" v-for="product in menu" v-bind:key="product.name">
+        <button class="btn-action" @click="getCategory(product.value)">
+          <img :src="product.url"
                width="30px">
-         Todos
-        </button>
-      </li>
-      <li class="list-group-item list-group-item-action">
-        <button class="btn-action" @click="getCategory('0')">
-          <img src="https://image.flaticon.com/icons/svg/2366/2366518.svg"
-               width="30px">
-          Desayunos
-        </button>
-      </li>
-      <li class="list-group-item list-group-item-action">
-        <button class="btn-action">
-          <img src="https://image.flaticon.com/icons/svg/701/701980.svg"
-               width="30px">
-          Comidas
-        </button>
-      </li>
-      <li class="list-group-item list-group-item-action">
-        <button class="btn-action">
-          <img src="https://image.flaticon.com/icons/svg/1209/1209400.svg"
-               width="30px">
-          Cenas
+         {{product.name}}
         </button>
       </li>
     </ul>
@@ -43,6 +22,19 @@
 <script>
 export default {
   name: 'Menu',
+  data: function() {
+    return {
+      menu: [
+        {name: 'Todos', url:'https://image.flaticon.com/icons/svg/1046/1046857.svg', value: 99},
+        {name: 'Desayunos', url:'https://image.flaticon.com/icons/svg/2366/2366518.svg', value: 0},
+        {name: 'Entradas', url:'https://image.flaticon.com/icons/svg/751/751621.svg', value: 1},
+        {name: 'Platos p.', url:'https://image.flaticon.com/icons/svg/751/751602.svg', value: 2},
+        {name: 'Cena', url:'https://image.flaticon.com/icons/svg/649/649273.svg', value: 3},
+        {name: 'Postres', url:'https://image.flaticon.com/icons/svg/918/918234.svg', value: 4},
+        {name: 'Bebidas', url:'https://image.flaticon.com/icons/svg/600/600429.svg', value: 5},
+      ]
+    }
+  },
   methods: {
     getCategory: async function(category) {
       console.log('Holiiii');
@@ -59,7 +51,7 @@ export default {
 
       let response = await fetch(URL, config);
       let json = await response.json();
-      console.log(json);
+      this.$emit('changeMenu', json.body.response);
     },
     buildProduct: function(category) {
       let user_company = '';

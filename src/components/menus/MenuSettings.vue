@@ -24,7 +24,7 @@
         </button>
       </li>
       <li class="list-group-item list-group-item-action">
-        <button class="btn-action">
+        <button class="btn-action" v-on:click="$emit('change_window', 'historical')">
           <img src="https://image.flaticon.com/icons/svg/2289/2289352.svg"
                width="30px">
           Historial

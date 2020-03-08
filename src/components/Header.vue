@@ -4,19 +4,20 @@
       <div class="row">
         <div class="col-md-3">
           <button id="menu" class="btn">
-            <img src="../assets/icons/menu.svg" alt="menu" width="25px">
+            <img src="../assets/icons/menu.svg" alt="menu" width="25px" v-show="session">
             <p><strong class="text-light">SalesPoint</strong></p>
           </button>
         </div>
         <div class="col-lg-6">
-          <div class="container" v-if="session">
+          <div class="container" v-show="session">
             <input type="text" name="input-search" id="input-search"
                  placeholder="Buscar">
           </div>
         </div>
         <div class="col-md-3 text-right">
-          <div class="dropdown" v-if="session">
-            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <div class="dropdown" v-show="session">
+            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" 
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
              <b class="text-light">
               Carrito
               <span v-if="car.length > 0">{{index+1}}</span>

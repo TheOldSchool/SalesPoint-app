@@ -8,6 +8,9 @@ class Product {
     this.ingredients = '';
     this.company = '';
     this.category = '';
+    this.action = null;
+    this.responsable = '';
+    this.img = null;
   }
 
   setName(name) {
@@ -36,6 +39,18 @@ class Product {
 
   setCategory(category) {
     this.category = category;
+  }
+
+  setAction(action) {
+    this.action = action;
+  }
+
+  setResponsable(responsable) {
+    this.responsable = responsable;
+  }
+
+  setImg(img) {
+    this.img = img;
   }
 }
 

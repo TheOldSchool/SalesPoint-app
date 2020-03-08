@@ -18,7 +18,8 @@
       <SettingProducts @change_window="change_window" @edit_mode="edit_mode"
         :edit_product_menu="list" v-if="type == 'products'"/>
       <SettingEmployee @change_window="change_window" :edit_employee_menu="list" 
-        v-else />
+        v-else-if="type == 'employees'" />
+      <Historical v-else-if="type == 'historical'" />
     </div>
   </div>
 </template>
@@ -27,6 +28,7 @@
 import MenuSettings from "@/components/menus/MenuSettings.vue";
 import SettingProducts from "@/components/products/SettingProducts.vue";
 import SettingEmployee from "@/components/employees/SettingEmployee.vue";
+import Historical from "@/components/Historical.vue";
 
 export default {
   name: "Settings",
@@ -49,7 +51,8 @@ export default {
   components: {
       MenuSettings,
       SettingProducts,
-      SettingEmployee
+      SettingEmployee,
+      Historical
   }
 };
 </script>

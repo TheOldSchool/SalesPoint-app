@@ -2,7 +2,7 @@
   <div id="market" class="row">
     <div class="col-sm-2">
       <aside id="nav-menu">
-        <Menu />
+        <Menu @changeMenu="changeMenu" />
       </aside>
     </div>
     <div class="col">
@@ -11,7 +11,7 @@
           <MarketCar />
         </div>
       </aside>
-      <ListMenu :edit_page="false" />
+      <ListMenu :menu="menu" :edit_page="false" />
     </div>
   </div>
 </template>
@@ -23,10 +23,20 @@ import ListMenu from "@/components/menus/ListMenu.vue";
 
 export default {
   name: 'Market',
+  data: function() {
+    return {
+      menu: null,
+    }
+  },
   components: {
     MarketCar,
     Menu,
     ListMenu
+  },
+  methods: {
+    changeMenu: function(menu) {
+      this.menu = menu;
+    }
   }
 }
 </script>

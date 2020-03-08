@@ -32,13 +32,18 @@ export default {
       }
     }
   },
-  props: ['edit_page'],
+  props: ['menu', 'edit_page'],
   components: {
     Product
   },
   methods: {
     emit_edit: function() {
       this.$emit('edit', true);
+    }
+  },
+  watch: {
+    menu: function() {
+      this.list_products = this.menu;
     }
   },
   beforeCreate: async function() {

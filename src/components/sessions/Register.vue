@@ -40,6 +40,10 @@
             <input type="checkbox" name="terms" id="terms">
             Acepto los terminos y condiciones de uso
           </label>
+          <label for="active_session">
+            <input type="checkbox" id="active_session">
+            Recordarme
+          </label>
         </div>
         <input type="submit" id="snd-reg" value="Registrarme" class="btn market-btn">
       </div>
@@ -54,6 +58,7 @@
 
 <script>
 import User from "@/res/User.js";
+
 export default {
   name: 'Register',
   data: function() {
@@ -66,7 +71,7 @@ export default {
     send_user: async function(send_user) {
       let url = 'http://localhost:3000/api/add_user';
       let data = {user: send_user};
-      
+
       const options = {
         method: 'POST',
         body: JSON.stringify(data),
@@ -74,7 +79,7 @@ export default {
           'Content-Type': 'application/json'
         }
       };
-      
+
       let response = await fetch(url, options);
       let json = await response.json();
       this.validate_response(json);
@@ -108,6 +113,14 @@ export default {
     },
     validate_response: function(acuse) {
       if(acuse.body.stats === 200) {
+        if(this.remember_me) {
+          localStorage.setItem('user', JSON.stringify(acuse.body.response[0]));
+          localStorage.setItem('company', acuse.body.response[0].company);
+        } else {
+          sessionStorage.setItem('user', JSON.stringify(acuse.body.response[0]));
+          sessionStorage.setItem('company', acuse.body.response[0].company);
+        }
+
         this.$emit('header_panel');
         this.$router.push({name: 'market'});
       } else {
@@ -131,5 +144,9 @@ export default {
   bottom: 0;
   margin-left: 60%;
   margin-bottom: 50px;
+}
+
+label {
+  display: block;
 }
 </style>

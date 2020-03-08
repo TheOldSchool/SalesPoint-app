@@ -16,7 +16,7 @@ class Validator {
   sqlInjection(field) {
     let injection = field.indexOf('\'') != -1 && field.indexOf('"') != -1;
     if(injection)
-      field.replace("'", "\'").replace('"', '\"');
+      field.replace("'", "'").replace('"', '"');
     return false;
   }
 }

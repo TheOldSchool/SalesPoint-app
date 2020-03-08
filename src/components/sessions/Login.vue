@@ -68,8 +68,10 @@ export default {
     validate_response: function(acuse) {
       if(acuse.body.stats === 200) {
         if(this.remember_me) {
+          localStorage.setItem('user', JSON.stringify(acuse.body.response[0]));
           localStorage.setItem('company', acuse.body.response[0].company);
         } else {
+          sessionStorage.setItem('user', JSON.stringify(acuse.body.response[0]));
           sessionStorage.setItem('company', acuse.body.response[0].company);
         }
 

@@ -16,7 +16,7 @@
 
       <div class="form-group">
         <label for="product_img">Icono de Producto</label>
-        <input type="file" class="form-control-file" id="product_img">
+        <input type="file" class="form-control-file" id="product_img" name="product_img">
       </div>
       <div class="form-row">
         <div class="form-group col-md-12">
@@ -81,13 +81,14 @@ export default {
     }
   },
   methods: {
-    send_product: async function(send_product) {
+    send_product: async function(send_product, product_img) {
       const URL = 'http://localhost:3000/api/add_product';
-      const data = {product: send_product};
+      const data = {product: send_product, img: product_img};
 
       let options = {
         method: 'POST',
         body: JSON.stringify(data),
+        files: product_img,
         headers: {
           'Content-Type': 'application/json'
         }
@@ -99,25 +100,30 @@ export default {
     },
     add_product: function(event) {
       let key = this.generate_key();
+      let img = event.target.product_img.files[0];
       let name = event.target.name_product.value;
       let desc = event.target.desc_product.value;
       let price = event.target.price_product.value;
       let ingredients = event.target.ingredients_product.value;
       let category = event.target.name_type.value;
-      let company = null;
+      let user = null;
 
-      if(localStorage.getItem('company') === undefined) {
-        company = sessionStorage.getItem('company');
+      if(localStorage.getItem('user') == undefined) {
+        user  = JSON.parse(sessionStorage.getItem('user'));
       } else {
-        company = localStorage.getItem('company');
+        user = JSON.parse(localStorage.getItem('user'));
       }
 
-      let product = new Product(key, name, price, company);
+      let product = new Product(key, name, price);
+      let formData = new FormData();
+      formData.append('files', img);
+      product.setCompany(user.company);
       product.setDescription(desc);
       product.setIngredients(ingredients);
-      product.setCompany(company);
       product.setCategory(category);
-      this.send_product(product);
+      product.setAction(2);
+      product.setResponsable(user.username);
+      this.send_product(product, formData);
     },
     generate_key: function() {
       let mask = 'abcdefghijklmnopqrstuvwxyz';
