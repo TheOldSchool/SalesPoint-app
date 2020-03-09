@@ -37,8 +37,7 @@ export default {
   },
   methods: {
     getCategory: async function(category) {
-      console.log('Holiiii');
-      const URL = 'http://localhost:3000/api/getproducts';
+      const URL = (category == 99) ? 'http://localhost:3000/api/get_all_product' : 'http://localhost:3000/api/getproducts';
       let config = {
         method: 'POST',
         body: JSON.stringify({
@@ -56,7 +55,7 @@ export default {
     buildProduct: function(category) {
       let user_company = '';
 
-      if(localStorage.getItem('company') === undefined) {
+      if(localStorage.getItem('company') == undefined) {
         user_company = sessionStorage.getItem('company');
       } else {
         user_company = localStorage.getItem('company');

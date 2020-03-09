@@ -7,6 +7,10 @@ class User {
     this.cellphone = null;
     this.gender = null;
     this.company_turn = null;
+    this.rfc = null;
+    this.address = null;
+    this.colony = null;
+    this.postal_code = null;
   }
 
   setUsername(username) {
@@ -25,16 +29,32 @@ class User {
     this.company = company;
   }
 
+  setCompanyTurn(turn) {
+    this.company_turn = turn;
+  }
+
+  setRFC(rfc) {
+    this.rfc = rfc;
+  }
+
+  setAddress(address) {
+    this.address = address;
+  }
+
+  setColony(colony) {
+    this.colony = colony;
+  }
+
+  setpostalCode(postal_code) {
+    this.postal_code = postal_code;
+  }
+
   setCellphone(cellphone) {
     this.cellphone = cellphone;
   }
 
   setGender(gender) {
     this.gender = gender;
-  }
-
-  setCompanyTurn(turn) {
-    this.company_turn = turn;
   }
 }
 
