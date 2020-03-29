@@ -17,8 +17,13 @@
 
       <SettingProducts @change_window="change_window" @edit_mode="edit_mode"
         :edit_product_menu="list" v-if="type == 'products'"/>
-      <SettingEmployee @change_window="change_window" :edit_employee_menu="list" 
-        v-else-if="type == 'employees'" />
+
+      <SettingEmployee @change_window="change_window" @edit_mode="edit_mode" 
+        :edit_employee_menu="list" v-else-if="type == 'employees'" />
+
+      <SettingProviders @change_window="change_window" @edit_mode="edit_mode"
+        :edit_menu="list" v-else-if="type == 'providers'" />
+
       <Historical v-else-if="type == 'historical'" />
     </div>
   </div>
@@ -28,13 +33,14 @@
 import MenuSettings from "@/components/menus/MenuSettings.vue";
 import SettingProducts from "@/components/products/SettingProducts.vue";
 import SettingEmployee from "@/components/employees/SettingEmployee.vue";
+import SettingProviders from "@/components/providers/SettingProviders.vue";
 import Historical from "@/components/Historical.vue";
 
 export default {
   name: "Settings",
   data: function() {
       return {
-        type: 'products',
+        type: 'historical',
         list: false
       }
   },
@@ -52,6 +58,7 @@ export default {
       MenuSettings,
       SettingProducts,
       SettingEmployee,
+      SettingProviders,
       Historical
   }
 };

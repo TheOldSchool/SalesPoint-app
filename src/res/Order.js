@@ -1,11 +1,30 @@
 class Order {
-  constructor(product, amount) {
-    this.product = product;
-    this.amount = amount;
+  constructor() {
+    this.products = [];
   }
 
-  setAmount(amount) {
-    this.amount = amount;
+  len() {
+    return this.products.length;
+  }
+
+  getProducts() {
+    return this.products;
+  }
+
+  addProduct(product) {
+    this.products.push(product);
+  }
+
+  removeProduct() {
+
+  }
+
+  getTotalPrice() {
+    let total = 0;
+    for(let i = 0; i < this.products.length; i++)
+      total += parseFloat(this.products[i].price);
+
+    return total;
   }
 }
 

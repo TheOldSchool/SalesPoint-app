@@ -55,11 +55,14 @@
 </template>
 
 <script>
+import Requester from '@/res/Requester.js';
+
 export default {
   name: 'Historical',
   data: function() {
     return {
       historical: [],
+      requester: new Requester()
     }
   },
   methods: {
@@ -83,29 +86,18 @@ export default {
       }
     }
   },
-  beforeCreate: async function() {
-    const URL = 'http://localhost:3000/api/gethistorical';
-    let user_company = '';
-
-    if(localStorage.getItem('company') == undefined) {
-      user_company = sessionStorage.getItem('company');
-    } else {
-      user_company = localStorage.getItem('company');
-    }
-    console.log(user_company);
-    const config = {
-      method: 'POST',
-      body: JSON.stringify({user: {company: user_company}}),
-      headers: {
-        'Content-Type': 'application/json'
+  created: async function() {
+    const route = '/gethistorical';
+    const user = this.$store.getters.getUser;
+    const historial = {
+      user: {
+        type: 'historical',
+        template: user
       }
     };
 
-    let response = await fetch(URL, config);
-    let json = await response.json();
-    this.historical = json.body.response;
-
-    console.log(this.historical);
+    let response = await this.requester.post(route, historial);
+    this.historical = response;
   }
 }
 </script>

@@ -1,8 +1,12 @@
 class Car {
   constructor() {
     this.orders = [];
-    this.subtotal = 0;
-    this.discount = 0;
+    this.subtotal = 0.00;
+    this.discount = 0.00;
+  }
+
+  getOrders() {
+    return this.orders;
   }
 
   addOrder(order) {
@@ -11,6 +15,20 @@ class Car {
 
   removeOrder(order) {
     this.orders.splice(order.index, 1);
+  }
+
+  getDiscount() {
+    return this.discount;
+  }
+
+  getSubtotal() {
+    this.subtotal = 0;
+    for(let i = 0; i < this.orders.length; i++) {
+      console.log(this.orders[i].getTotalPrice());
+      this.subtotal += this.orders[i].getTotalPrice();
+    }
+
+    return this.subtotal;
   }
 
   getTotal() {

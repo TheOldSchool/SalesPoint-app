@@ -20,12 +20,10 @@
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
              <b class="text-light">
               Carrito
-              <span v-if="car.length > 0">{{index+1}}</span>
-              <span v-else>vacio</span>
              </b>
             </button>
             <div class="dropdown-menu">
-              <MarketCar />
+              <MarketCar :car="car" />
             </div>
           </div>
         </div>
@@ -49,19 +47,16 @@ export default {
   name: 'Header',
   data: function() {
     return {
-      index: 0,
-      car: ['mama']
     }
   },
-  props: ['session'],
+  props: ['session', 'car'],
   components: {
     MarketCar
   },
   created: function() {
-    let inLocal = localStorage.getItem('company') == undefined;
-    let inSession = sessionStorage.getItem('company') == undefined;
+    const user = this.$store.getters.getUser;
 
-    if(!inLocal || !inSession)
+    if(user != undefined)
       this.$emit('header_alarm');
   }
 }

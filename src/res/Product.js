@@ -1,16 +1,38 @@
 class Product {
-  constructor(key, name, price) {
-    this.key = key;
-    this.name = name;
-    this.price = price;
-    this.desc = '';
-    this.amount = '';
-    this.ingredients = '';
-    this.company = '';
-    this.category = '';
-    this.action = null;
-    this.responsable = '';
-    this.img = null;
+  constructor(key, company) {
+    this.product = {
+      key: key,
+      name: '',
+      price: '',
+      desc: '',
+      amount: '',
+      ingredients: '',
+      company: company,
+      category: '',
+      action: null,
+      responsable: '',
+      photo: 'http://localhost:8000/'
+    };
+  }
+
+  build(event, responsable) {
+    const target = event.target;
+    this.product.name = (target.name) ? target.name.value : '';
+    this.product.price = (target.price) ? target.price.value : '';
+    this.product.desc = (target.desc) ? target.desc.value : '';
+    this.product.amount = (target.amount) ? target.amount.value : '';
+    this.product.ingredients = (target.ingredients) ? target.ingredients.value : '';
+    this.product.category = (target.category) ? target.category.value : '';
+    this.product.responsable = responsable;
+  }
+
+  serialize() {
+    return {
+      product: {
+        type: 'product',
+        template: this.product
+      }
+    };
   }
 
   setName(name) {
@@ -47,10 +69,6 @@ class Product {
 
   setResponsable(responsable) {
     this.responsable = responsable;
-  }
-
-  setImg(img) {
-    this.img = img;
   }
 }
 

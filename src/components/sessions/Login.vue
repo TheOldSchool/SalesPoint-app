@@ -1,14 +1,14 @@
 <template lang="html">
   <div class="container" id="log-in">
-    <form v-on:submit.prevent="build_user($event)">
+    <form v-on:submit.prevent="send_user($event)">
       <div class="form-group">
         <label for="email_addr">Correo electronico</label>
-        <input type="email" class="form-control" name="email_addr" id="email_addr"
+        <input type="email" class="form-control" name="email" id="email"
                aria-describedby="emailHelp" placeholder="example@hotmail.com" required>
       </div>
       <div class="form-group">
         <label for="pass_word">Contraseña</label>
-        <input type="password" class="form-control" name="pass_word" id="pass-word"
+        <input type="password" class="form-control" name="pass" id="pass"
                placeholder="********" maxlength="18" required>
         <small id="pass-word-alert" class="form-text text-muted">
           Los espacios también son tomados en cuenta.
@@ -33,46 +33,34 @@
 
 <script>
 import User from "@/res/User.js";
+import Requester from '@/res/Requester.js';
+
 export default {
   name: 'Login',
   data: function() {
     return {
       db_error: false,
-      remember_me: false
+      remember_me: false,
+      requester: new Requester(),
     }
   },
   methods: {
-    send_user: async function(send_user) {
-      let url = 'http://localhost:3000/api/get_user';
-      let data = {user: send_user};
+    send_user: async function(event) {
+      let route = '/getuser';
+      const user = new User();
+      user.build(event, '');
+      const serialize_user = user.serialize();
 
-      const options = {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
-
-      let response = await fetch(url, options);
-      let json = await response.json();
-      this.validate_response(json);
+      const response = await this.requester.post(route, serialize_user);
+      console.log(response);
+      this.validate_response(response);
     },
-    build_user: function(event) {
-      let email = event.target.email_addr.value;
-      let pass = event.target.pass_word.value;
-      this.remember_me = event.target.active_session.checked;
-      let user = new User(email, pass);
-      this.send_user(user);
-    },
-    validate_response: function(acuse) {
-      if(acuse.body.stats === 200) {
+    validate_response: function(response) {
+      if(response.length == 1) {
         if(this.remember_me) {
-          localStorage.setItem('user', JSON.stringify(acuse.body.response[0]));
-          localStorage.setItem('company', acuse.body.response[0].company);
+          localStorage.setItem('user', JSON.stringify(response[0]));
         } else {
-          sessionStorage.setItem('user', JSON.stringify(acuse.body.response[0]));
-          sessionStorage.setItem('company', acuse.body.response[0].company);
+          sessionStorage.setItem('user', JSON.stringify(response[0]));
         }
 
         this.$emit('header_panel');

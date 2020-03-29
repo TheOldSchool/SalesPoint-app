@@ -24,6 +24,21 @@
         </button>
       </li>
       <li class="list-group-item list-group-item-action">
+        <button class="btn-action" v-on:click="$emit('change_window', 'providers')">
+          <img src="../../assets/icons/providers.svg"
+               width="30px">
+          Proveedores
+        </button>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <button class="btn-action">
+          <img src="../../assets/icons/buy.svg"
+               width="30px">
+          Compras
+        </button>
+      </li>
+
+      <li class="list-group-item list-group-item-action">
         <button class="btn-action" v-on:click="$emit('change_window', 'historical')">
           <img src="https://image.flaticon.com/icons/svg/2289/2289352.svg"
                width="30px">

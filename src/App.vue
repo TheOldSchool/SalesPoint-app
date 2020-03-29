@@ -1,9 +1,9 @@
 <template>
   <div id="app" class="bg-light">
-    <Header :session="session" @header_alarm="session = true" />
+    <Header :car="car" :session="session" @header_alarm="session = true" />
 
     <div id="content">
-      <router-view v-on:header_panel="config_init()"/>
+      <router-view v-on:header_panel="config_init()" @set_car="prepare_car" />
     </div>
   </div>
 </template>
@@ -14,7 +14,8 @@ export default {
   name: 'App',
   data: function() {
     return {
-      session: false
+      session: false,
+      car: null,
     }
   },
   components: {
@@ -23,13 +24,16 @@ export default {
   methods: {
     config_init: function() {
       this.session = true;
+    },
+    prepare_car: function(car) {
+      this.car = car;
     }
   }
 }
 </script>
 
 <style>
-@font-face {
+font-face {
   font-family: "Varela Round";
   src: url("./assets/fonts/VarelaRound-Regular.ttf");
 }

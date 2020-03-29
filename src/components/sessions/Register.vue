@@ -95,14 +95,14 @@
             <span id="req_tel" class="badge badge-danger"> Requerido*</span>
             <span class="badge badge-danger"> Formato Incorrecto*</span>
           </label>
-          
+
           <input type="number" name="cellphone" id="cellphone"
                  class="form-control" placeholder="6442098633" v-model="cellphone"
                  @blur="outBlur($event, 'req_tel')" @keyup="validate_phone" required>
         </div>
         <div class="form-group col-lg-12">
           <label for="terms">
-            <input type="checkbox" name="terms" id="terms" v-model="terms" 
+            <input type="checkbox" name="terms" id="terms" v-model="terms"
               @blur=validate_terms required >
             Acepto los terminos y condiciones de uso
           </label>
@@ -145,7 +145,7 @@ export default {
   },
   methods: {
     send_user: async function(send_user) {
-      let url = 'http://localhost:3000/api/add_user';
+      let url = 'http://localhost:8000/api/add_user';
       let data = {user: send_user};
       const options = {
         method: 'POST',

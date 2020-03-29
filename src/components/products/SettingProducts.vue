@@ -6,7 +6,8 @@
     </div>
 
     <TemplateProduct v-if="edit_product_menu" />
-    <ListMenu @edit="$emit('edit_mode', 'true')" :edit_page="true" v-else />
+    <ListMenu @edit="$emit('edit_mode', 'true')" :edit_page="true"
+      :delete_access="true" v-else />
   </div>
 </template>
 
@@ -17,18 +18,14 @@ import ListMenu from '@/components/menus/ListMenu.vue'
 export default {
   name: 'SettingProducts',
   data: function() {
-    return {
-      
-    }
+    return { }
   },
   props: ['edit_product_menu'],
   components: {
     TemplateProduct,
     ListMenu
   },
-  method: {
-    
-  }
+  method: { }
 }
 </script>
 

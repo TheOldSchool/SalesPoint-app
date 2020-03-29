@@ -6,7 +6,7 @@
         <tr>
           <td>
             <img src="https://image.flaticon.com/icons/svg/1573/1573347.svg" 
-                 alt="icon" width="40px">
+                 alt="icon" width="40px" id="img" name="img">
           </td>
           <td class="align-bottom">
             <h5><b>Productos</b></h5>
@@ -15,25 +15,25 @@
       </table>
 
       <div class="form-group">
-        <label for="product_img">Icono de Producto</label>
+        <label for="photo">Icono de Producto</label>
         <input type="file" class="form-control-file" id="product_img" name="product_img">
       </div>
       <div class="form-row">
         <div class="form-group col-md-12">
-          <label for="name_product">Nombre</label>
-          <input type="text" class="form-control" id="name_product" required>
+          <label for="name">Nombre</label>
+          <input type="text" class="form-control" id="name" required>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="desc_product">Descripción</label>
-        <textarea name="desc_product" id="desc_product" class="form-control" required></textarea>
+        <label for="desc">Descripción</label>
+        <textarea name="desc" id="desc" class="form-control" required></textarea>
       </div>
 
       <div class="form-row">
         <div class="form-group col-md-6">
-          <label for="price_product">Precio</label>
-          <input type="text" class="form-control" id="price_product" required>
+          <label for="price">Precio</label>
+          <input type="text" class="form-control" id="price" required>
         </div>
         <div class="form-group col-md-6">
           <label for="ingredients_product">Ingredientes</label>
@@ -46,8 +46,8 @@
 
       <div class="form-row">
         <div class="form-group col">
-          <label for="menu_type">Categoria</label>
-          <select id="menu_type" class="form-control" name="name_type">
+          <label for="category">Categoria</label>
+          <select id="category" class="form-control" name="category">
             <option v-for="category in categories" :value="category.type" 
               v-bind:key="category.type">
               {{category.name}}
@@ -61,11 +61,18 @@
           Agregar Producto
       </button>
     </form>
+
+    <div class="alert" :class="{ 'alert-primary': okay, 'alert-danger': !okay }" role="alert" 
+      v-show="alert_show" @click="alert_show = false">
+      {{ message_alert }}
+    </div>
   </div>
 </template>
 
 <script>
 import Product from "@/res/Product.js";
+import Requester from '@/res/Requester.js';
+
 export default {
   name: "TemplateProduct",
   data: function() {
@@ -77,66 +84,44 @@ export default {
         {name: 'Cena', type: 3},
         {name: 'Postres', type: 4},
         {name: 'Bebidas', type: 5},
-      ]
+      ],
+      okay: false,
+      alert_show: false,
+      message_alert: '',
+      requester: new Requester(),
     }
   },
   methods: {
-    send_product: async function(send_product, product_img) {
-      const URL = 'http://localhost:3000/api/add_product';
-      const data = {product: send_product, img: product_img};
+    send_product: async function(product) {
+      const route = '/addproduct';
 
-      let options = {
-        method: 'POST',
-        body: JSON.stringify(data),
-        files: product_img,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
-
-      let response = await fetch(URL, options);
-      let json = await response.json();
-      this.validate_response(json);
+      const response = await this.requester.postFile(route, product);
+      this.validate_response(response);
     },
     add_product: function(event) {
-      let key = this.generate_key();
+      let key = this.$store.getters.getRandomKey;
       let img = event.target.product_img.files[0];
-      let name = event.target.name_product.value;
-      let desc = event.target.desc_product.value;
-      let price = event.target.price_product.value;
-      let ingredients = event.target.ingredients_product.value;
-      let category = event.target.name_type.value;
-      let user = null;
+      const user = this.$store.getters.getUser;
 
-      if(localStorage.getItem('user') == undefined) {
-        user  = JSON.parse(sessionStorage.getItem('user'));
+      let product = new Product(key, user.company);
+      product.build(event);
+      product.setAction(2);
+
+      let formData = new FormData();
+      formData.append('img', img);
+      formData.append('product', JSON.stringify(product.serialize()));
+      this.send_product(formData);
+    },
+    validate_response: function(response) {
+      if(response.length == 0) {
+        this.okay = true;
+        this.message_alert = 'Se agregó producto correctamente';
       } else {
-        user = JSON.parse(localStorage.getItem('user'));
+        this.okay = false;
+        this.message_alert = 'Hubo un problema al agregar el producto';
       }
 
-      let product = new Product(key, name, price);
-      let formData = new FormData();
-      formData.append('files', img);
-      product.setCompany(user.company);
-      product.setDescription(desc);
-      product.setIngredients(ingredients);
-      product.setCategory(category);
-      product.setAction(2);
-      product.setResponsable(user.username);
-      this.send_product(product, formData);
-    },
-    generate_key: function() {
-      let mask = 'abcdefghijklmnopqrstuvwxyz';
-      mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      mask += '0123456789';
-      let generated_key = '';
-
-      for (var i = 15; i > 0; --i)
-        generated_key += mask[Math.floor(Math.random() * mask.length)];
-      return generated_key;
-    },
-    validate_response: function(acuse) {
-      console.log(acuse);
+      this.alert_show = true;
     }
   }
 };
@@ -163,5 +148,14 @@ table tr td{
 
 #add-product {
   width: 100%;
+}
+
+.alert {
+  position: fixed;
+  bottom: 0;
+  width: 70%;
+  margin-left: 50%;
+  left: -28%;
+  margin-bottom: 50px;
 }
 </style>

@@ -4,12 +4,14 @@
       <div class="col-sm-3" v-if="edit_page">
         <div>
           <Product @edit="emit_edit" :product="add_product" :img="'icons/add.svg'" 
-                   :edit_access="true" />
+                   :edit_access="true" :delete_access="delete_access" />
         </div>
       </div>
       <div class="col-sm-3" v-for="product in list_products" :key="product.key">
         <div> 
-          <Product :product="product" :img="'icons/laptop.svg'" :edit_access="false" />
+          <Product :product="product" :img="'icons/laptop.svg'" :edit_access="false" 
+            :delete_access="delete_access" @deleted="deleted_product" 
+            @pushing_product="send_product" />
         </div>
       </div>
     </div>
@@ -18,6 +20,7 @@
 
 <script>
 import Product from '@/components/products/Product.vue';
+import Requester from '@/res/Requester.js';
 
 export default {
   name: 'ListMenu',
@@ -29,16 +32,38 @@ export default {
         name: '',
         desc: 'Agrega un nuevo producto',
         price: 'Agregar'
-      }
+      },
+      requester: new Requester()
     }
   },
-  props: ['menu', 'edit_page'],
+  props: ['menu', 'edit_page', 'delete_access'],
   components: {
     Product
   },
   methods: {
     emit_edit: function() {
       this.$emit('edit', true);
+    },
+    deleted_product: function(state) {
+      console.log(state);
+      if(state)
+        this.make_request();
+    },
+    make_request: async function() {
+      const route = '/getallproduct';
+      const user = this.$store.getters.getUser;
+      const product = {
+        product: {
+          type: 'product',
+          template: { company: user.company }
+        }
+      };
+
+      let response = await this.requester.post(route, product);
+      this.list_products = response;
+    },
+    send_product: function(selected_product) {
+      this.$emit('pushing_product', selected_product);
     }
   },
   watch: {
@@ -46,27 +71,8 @@ export default {
       this.list_products = this.menu;
     }
   },
-  beforeCreate: async function() {
-    const URL = 'http://localhost:3000/api/get_all_product';
-    let user_company = '';
-
-    if(localStorage.getItem('company') == undefined) {
-      user_company = sessionStorage.getItem('company');
-    } else {
-      user_company = localStorage.getItem('company');
-    }
-
-    const options = {
-      method: 'POST',
-      body: JSON.stringify({product: {company: user_company}}),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
-
-    let response = await fetch(URL, options);
-    let json = await response.json();
-    this.list_products = json.body.response;
+  created: function() {
+    this.make_request();
   }
 }
 </script>

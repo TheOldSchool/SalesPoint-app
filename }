@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     make_request: async function(data) {
-      const route = '/addemployee';
+      const route = 'addemployee';
 
       const response = await this.requester.postFile(route, data);
       console.log(response);

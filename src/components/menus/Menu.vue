@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import Requester from '@/res/Requester.js';
+
 export default {
   name: 'Menu',
   data: function() {
@@ -32,40 +34,27 @@ export default {
         {name: 'Cena', url:'https://image.flaticon.com/icons/svg/649/649273.svg', value: 3},
         {name: 'Postres', url:'https://image.flaticon.com/icons/svg/918/918234.svg', value: 4},
         {name: 'Bebidas', url:'https://image.flaticon.com/icons/svg/600/600429.svg', value: 5},
-      ]
+      ],
+      requester: new Requester()
     }
   },
   methods: {
     getCategory: async function(category) {
-      const URL = (category == 99) ? 'http://localhost:3000/api/get_all_product' : 'http://localhost:3000/api/getproducts';
-      let config = {
-        method: 'POST',
-        body: JSON.stringify({
-          product: this.buildProduct(category)
-        }),
-        headers: {
-          'Content-Type': 'application/json'
+      const route = (category == 99) ? '/getallproduct' : '/getproducts';
+      const user = this.$store.getters.getUser;
+      const product = {
+        product: {
+          type: 'product',
+          template: {
+            company: user.company,
+            category: category
+          }
         }
       };
 
-      let response = await fetch(URL, config);
-      let json = await response.json();
-      this.$emit('changeMenu', json.body.response);
+      let response = await this.requester.post(route, product);
+      this.$emit('changeMenu', response);
     },
-    buildProduct: function(category) {
-      let user_company = '';
-
-      if(localStorage.getItem('company') == undefined) {
-        user_company = sessionStorage.getItem('company');
-      } else {
-        user_company = localStorage.getItem('company');
-      }
-
-      return {
-        company: user_company,
-        category: category
-      };
-    }
   }
 }
 </script>
