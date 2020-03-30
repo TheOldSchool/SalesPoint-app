@@ -1,5 +1,6 @@
 <template>
   <div id="historical" class="container">
+    <!-- Listado del historial !-->
     <div class="container">
       <div class="row">
         <div class="col">
@@ -68,17 +69,20 @@ export default {
   methods: {
     getClasses: function(switcher) {
       return {
+        // Clases para verse rojo o verde el fondo
         'list-group-item-danger': switcher == 0,
         'list-group-item-success': switcher == 1
       }
     },
     getClassesText: function(switcher) {
       return {
+        // Clases para verse rojo o vere los textos
         'dangerText': switcher == 0,
         'successText': switcher == 1
       }
     },
     getImage: function(switcher) {
+      // Saber que icono poner
       switch(switcher) {
         case 0: return 'minus.svg';
         case 1: return 'plus.svg';
@@ -87,8 +91,11 @@ export default {
     }
   },
   created: async function() {
+    // route es la ruta del server a la cual ir
     const route = '/gethistorical';
+    // Se obtiene usuario del login
     const user = this.$store.getters.getUser;
+    // Se crea objeto reconocible por el server
     const historial = {
       user: {
         type: 'historical',

@@ -5,6 +5,8 @@
       <small><i>**Solo productos a la venta, no ingredientes**</i></small>
     </div>
 
+    <!-- Las SettingAlgo constan de un Template o Formulario y un List donde se muestran
+      todos los de su categoria en este caso productos !-->
     <TemplateProduct v-if="edit_product_menu" />
     <ListMenu @edit="$emit('edit_mode', 'true')" :edit_page="true"
       :delete_access="true" v-else />

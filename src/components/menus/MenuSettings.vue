@@ -1,8 +1,10 @@
 <template>
   <div class="container" id="menusett">
+    <!-- Menu de configuraciones !-->
     <h6 class="text-info">Configuración</h6>
     <ul class="list-group list-group-flush">
       <li class="list-group-item list-group-item-action">
+        <!-- Avisa a que pantalla ir con el emit !-->
         <button class="btn-action" v-on:click="$emit('change_window', 'products')">
           <img src="../../assets/icons/pizza.svg"
                width="30px">
@@ -10,6 +12,7 @@
         </button>
       </li>
       <li class="list-group-item list-group-item-action">
+        <!-- Avisa a que pantalla ir con el emit !-->
         <button class="btn-action" v-on:click="$emit('change_window', 'employees')">
           <img src="../../assets/icons/employees.svg"
                width="30px">
@@ -24,6 +27,7 @@
         </button>
       </li>
       <li class="list-group-item list-group-item-action">
+        <!-- Avisa a que pantalla ir con el emit !-->
         <button class="btn-action" v-on:click="$emit('change_window', 'providers')">
           <img src="../../assets/icons/providers.svg"
                width="30px">
@@ -39,6 +43,7 @@
       </li>
 
       <li class="list-group-item list-group-item-action">
+        <!-- Avisa a que pantalla ir con el emit !-->
         <button class="btn-action" v-on:click="$emit('change_window', 'historical')">
           <img src="https://image.flaticon.com/icons/svg/2289/2289352.svg"
                width="30px">

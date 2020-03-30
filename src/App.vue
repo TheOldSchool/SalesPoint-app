@@ -35,7 +35,7 @@ export default {
 <style>
 font-face {
   font-family: "Varela Round";
-  src: url("./assets/fonts/VarelaRound-Regular.ttf");
+  src: url("assets/fonts/VarelaRound-Regular.ttf");
 }
 
 :root {

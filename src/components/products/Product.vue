@@ -3,6 +3,7 @@
     <button class="btn card-button" @click="try_emit()"
       @mouseover="hover = true" @mouseleave="hover = false">
 
+      <!-- Se genera cuadro de productos con info de producto !-->
       <div class="col-lg-12 text-center">
         <img id="icon" :src="require(`@/assets/${img}`)" alt="icon" width="80%" 
           v-if="edit_access" >
@@ -47,11 +48,19 @@ export default {
       requester: new Requester()
     }
   },
+  // product es el objeto Producto con la info
+  // img es la imagen del producto
+  // selected_key no recuerdo creo que no sirve de naah JAJAJA
+  // edit_acces es que puede o no ir al formulario de alta
+  // delete access es para ver si muestra o no el boton de eliminar
   props: ['product', 'img', 'selected_key', 'edit_access', 'delete_access'],
   methods: {
+    // Todo lo de selected_key no recuerdo que es, preguntadme si se les complica con algo
     set_selected_key: function(key) {
       this.selected_key = key;
     },
+    // Avisa que habra formulario de altas si es el cuadro de altas
+    // O Agrega producto a la orden
     try_emit: function() {
       if(this.edit_access)
         this.$emit('edit', true);
@@ -70,6 +79,7 @@ export default {
 
         const response = await this.requester.post(route, product);
 
+        // Si se elimino manda el emit de que si y si no de que no
         if(response.length == 0)
           this.$emit('deleted', true);
         else

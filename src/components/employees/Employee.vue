@@ -3,7 +3,8 @@
     <button class="btn card-button" @click="try_emit()"
       @mouseover="hover = true" @mouseleave="hover = false">
 
-     <div class="col-lg-12 text-center">
+      <!-- Se genera un pequeño cuadro con la info del empleado !-->
+      <div class="col-lg-12 text-center">
         <img id="icon" :src="require(`@/assets/${img}`)" alt="icon" width="80%"
           v-if="edit_access" >
         <img id="icon" :src="employee.photo" alt="icon" width="80%" v-else>
@@ -54,13 +55,17 @@ export default {
   },
   props: ['employee', 'img', 'edit_access'],
   methods: {
+    // Se usa solo en el cuadro de agregar, para abrir formulario
     try_emit: function() {
       if(this.edit_access)
         this.$emit('edit', true);
     },
     delete_employee: async function(email) {
       if(confirm('¿Desear eliminar este empleado?')) {
+        // route es la ruta del server a la que ir
         const route = '/delemployee';
+        // Se genera un objecto que el server pueda leer
+        // Con type y template donde template es la info del objeto
         const employee = {
           employee: {
             type: 'employee',
@@ -68,8 +73,10 @@ export default {
           }
         };
 
+        // Requester es una clase con lo necesario para hacer un request
         const response = await this.requester.post(route, employee);
 
+        // El server regresa un array y si es [] es que se elimino
         if(response.length == 0)
           this.$emit('deleted', true);
         else

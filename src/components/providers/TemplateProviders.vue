@@ -1,5 +1,6 @@
 <template>
   <div class="container template_providers">
+    <!-- Formulario de altas de proveedores !-->
     <h4><b>Panel de control</b></h4>
 
     <table>
@@ -94,7 +95,9 @@ export default {
     add_provider: async function(event) {
       const route = '/addprovider';
       const user = this.$store.getters.getUser;
-console.log(user);
+
+      // TODO: Hacer objeto Provider
+      // Se crea un objeto reconocible por el server
       const provider = {
         type: 'provider',
         template: {
@@ -111,9 +114,11 @@ console.log(user);
         }
       };
 
+      // Para mandar una imagen es con los FormData
       let formData = new FormData();
       formData.append('provider', JSON.stringify(provider));
       formData.append('img', event.target.logo.files[0]);
+      // Mandar imagenes con postFile
       const response = await this.requester.postFile(route, formData);
       console.log(response);
     },

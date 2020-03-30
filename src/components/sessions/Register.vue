@@ -1,5 +1,6 @@
 <template lang="html">
   <div class="container" id="register">
+    <!-- Formulario Registro de usuarios !-->
     <form v-on:submit.prevent="build_user($event)">
       <div class="form-row">
         <div class="form-group col-lg-12">

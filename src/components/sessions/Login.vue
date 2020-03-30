@@ -1,5 +1,6 @@
 <template lang="html">
   <div class="container" id="log-in">
+    <!-- Formulario inicio de sesion !-->
     <form v-on:submit.prevent="send_user($event)">
       <div class="form-group">
         <label for="email_addr">Correo electronico</label>
@@ -46,7 +47,9 @@ export default {
   },
   methods: {
     send_user: async function(event) {
+      // route es la ruta del server a la cual ir
       let route = '/getuser';
+      // Se crea objeto reconocible por el server a apartir del event del form
       const user = new User();
       user.build(event, '');
       const serialize_user = user.serialize();
@@ -56,6 +59,7 @@ export default {
       this.validate_response(response);
     },
     validate_response: function(response) {
+      // Si la info es correcta se guarda un objeto usuario
       if(response.length == 1) {
         if(this.remember_me) {
           localStorage.setItem('user', JSON.stringify(response[0]));

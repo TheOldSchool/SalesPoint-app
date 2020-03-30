@@ -10,6 +10,7 @@
       </tr>
     </table>
 
+    <!-- Formulario de alta de empleados !-->
     <form id="employee_form" @submit.prevent="build_employee">
       <div class="form-row">
         <div class="form-group col-lg-12">
@@ -78,18 +79,25 @@ export default {
   },
   methods: {
     make_request: async function(data) {
+      // route es la ruta del server a la cual ir
       const route = '/addemployee';
 
+      // postFile es un request que manda info y archivos como imagenes
       const response = await this.requester.postFile(route, data);
       console.log(response);
     },
     build_employee: function(event) {
+      // Cuando se inicia sesion se guarda un objeto usuario y se obtiene con $store
       const user = this.$store.getters.getUser;
       let employee = new Employee(user.company);
+      // Para generar la info del empleado apartir del form se usa el build y se manda un event
       employee.build(event, user.company);
 
+      // Para enviar un archivo al server se hace enviando un objeto FormData
       let formData = new FormData();
+      // Si es una img siempre es img del lado izquierdo
       formData.append('img', event.target.photo.files[0]);
+      // Si es un FormData la info se tiene que pasar a un JSON desde el serialize
       formData.append('employee', JSON.stringify(employee.serialize()));
       this.make_request(formData);
     }

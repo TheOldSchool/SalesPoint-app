@@ -1,5 +1,6 @@
 <template>
   <div id="listemployee" class="container">
+    <!-- Se crea listado de empleados !-->
     <div class="row">
       <div class="col-sm-3" v-if="edit_page">
         <div>
@@ -25,7 +26,9 @@ export default {
   name: 'ListEmployee',
   data: function() {
     return {
+      // Lista actualizable
       list_employees: [],
+      // Info del cuadro agregar empleado
       add_employee: {
           name: 'Agregar',
           email: 'Agregar',
@@ -33,27 +36,33 @@ export default {
           gender: 'Agregar',
           position: 'Agregar'
       },
+      // Saber si se debe mostrar el cuadro de agregar
       edit_page: true,
       requester: new Requester()
     }
   },
+  // Saber si se debe mostrar el boton de eliminar
   props: ['delete_access'],
   components: {
     Employee
   },
   methods: {
+    // Se avisa que se habra la ventana de agregar
     emit_edit: function() {
       this.$emit('edit', true);
     },
     deleted_employee: function(state) {
-      console.log(state);
+      // Si se elimina se manda a actualizar la lista
       if(state)
         this.make_request();
     },
     make_request: async function() {
+      // route es la ruta de server a la cual ir
       const route = '/getallemployees';
+      // Se obtiene el objeto user guardado al iniciar sesion
       const user = this.$store.getters.getUser;
 
+      // Se crea objeto reconocible por el server
       const employee = {
         employee: {
           type: 'employee',

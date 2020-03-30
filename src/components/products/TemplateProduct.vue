@@ -1,5 +1,6 @@
 <template>
   <div id="template-product" class="container">
+    <!-- Altas de productos !-->
     <form v-on:submit.prevent="add_product">
       <h4><b>Panel de control</b></h4>
       <table>
@@ -77,6 +78,7 @@ export default {
   name: "TemplateProduct",
   data: function() {
     return {
+      // Tipos de productos
       categories: [
         {name: 'Desayunos', type: 0},
         {name: 'Entradas', type: 1},
@@ -85,28 +87,38 @@ export default {
         {name: 'Postres', type: 4},
         {name: 'Bebidas', type: 5},
       ],
+      // Cambia color de mensaje
       okay: false,
+      // Cambia la visibilidad del mensaje
       alert_show: false,
+      // Cambia el texto del mensaje
       message_alert: '',
       requester: new Requester(),
     }
   },
   methods: {
     send_product: async function(product) {
+      // route es la ruta del server a la cual ir
       const route = '/addproduct';
 
+      // Enviar archivos con postFile
       const response = await this.requester.postFile(route, product);
       this.validate_response(response);
     },
     add_product: function(event) {
+      // Se genera una key aleatoria con $store
       let key = this.$store.getters.getRandomKey;
       let img = event.target.product_img.files[0];
+      // Se obtiene el objeto user del login
       const user = this.$store.getters.getUser;
 
+      // Genera un objeto Producto
       let product = new Product(key, user.company);
+      // build para crear su info apartir del event del formulario
       product.build(event);
       product.setAction(2);
 
+      // Enviar imagenes con FormData
       let formData = new FormData();
       formData.append('img', img);
       formData.append('product', JSON.stringify(product.serialize()));

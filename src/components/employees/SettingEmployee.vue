@@ -5,6 +5,8 @@
       <small><i>**Solo empleados de la empresa, administradores estan en "perfil"**</i></small>
     </div>
 
+    <!-- Las SettingAlgo constan de un Template o Formulario y un List donde se muestran
+      todos los de su categoria en este caso empleados !-->
     <TemplateEmployee v-if="edit_employee_menu" />
     <ListEmployee @edit="$emit('edit_mode', 'true')" :edit_page="true"
       :delete_access="true" v-else />

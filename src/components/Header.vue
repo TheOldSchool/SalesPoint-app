@@ -1,5 +1,6 @@
 <template lang="html">
   <div id="header">
+    <!-- Contiene barra de busqueda y carrito !-->
     <div class="container">
       <div class="row">
         <div class="col-md-3">
@@ -23,7 +24,7 @@
              </b>
             </button>
             <div class="dropdown-menu">
-              <MarketCar :car="car" />
+              <MarketCar />
             </div>
           </div>
         </div>
@@ -49,13 +50,14 @@ export default {
     return {
     }
   },
-  props: ['session', 'car'],
+  // Session es para ver si se inicio sesion y ver la barra y carrito
+  props: ['session'],
   components: {
     MarketCar
   },
   created: function() {
     const user = this.$store.getters.getUser;
-
+    // Saber si cambiar a que se vean las barras y carrito
     if(user != undefined)
       this.$emit('header_alarm');
   }

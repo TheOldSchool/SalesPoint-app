@@ -1,5 +1,6 @@
 <template>
   <div id="list-menu" class="container">
+    <!-- Se crea listado de productos !-->
     <div class="row">
       <div class="col-sm-3" v-if="edit_page">
         <div>
@@ -26,7 +27,9 @@ export default {
   name: 'ListMenu',
   data: function() {
     return {
+      // Listado de bd que se va actualizando
       list_products: null,
+      // Info para el cuadro de alta
       add_product: {
         key: 'ADD',
         name: '',
@@ -41,17 +44,21 @@ export default {
     Product
   },
   methods: {
+    // Se emite un evento para pasar a la alta
     emit_edit: function() {
       this.$emit('edit', true);
     },
     deleted_product: function(state) {
-      console.log(state);
+      // Si se elimino un producto se manda request para lista actualizada
       if(state)
         this.make_request();
     },
     make_request: async function() {
+      // route es la ruta de server a la que ir
       const route = '/getallproduct';
+      // Se obtiene el objeto user guardado al iniciar sesion
       const user = this.$store.getters.getUser;
+      // Se crea objeto reconocible con el server
       const product = {
         product: {
           type: 'product',
@@ -60,6 +67,7 @@ export default {
       };
 
       let response = await this.requester.post(route, product);
+      // Se actualiza la lista de productos
       this.list_products = response;
     },
     send_product: function(selected_product) {
@@ -68,6 +76,7 @@ export default {
   },
   watch: {
     menu: function() {
+      // Si el menu cambia se actualiza la lista de productos
       this.list_products = this.menu;
     }
   },
