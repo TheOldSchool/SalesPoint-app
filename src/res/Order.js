@@ -15,8 +15,8 @@ class Order {
     this.products.push(product);
   }
 
-  removeProduct() {
-
+  remove(index) {
+    this.products.splice(index, 1);
   }
 
   getTotalPrice() {

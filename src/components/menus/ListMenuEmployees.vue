@@ -20,7 +20,6 @@
 
 <script>
 import Employee from '@/components/employees/Employee.vue';
-import Requester from '@/res/Requester.js';
 
 export default {
   name: 'ListEmployee',
@@ -38,7 +37,6 @@ export default {
       },
       // Saber si se debe mostrar el cuadro de agregar
       edit_page: true,
-      requester: new Requester()
     }
   },
   // Saber si se debe mostrar el boton de eliminar
@@ -60,7 +58,7 @@ export default {
       // route es la ruta de server a la cual ir
       const route = '/getallemployees';
       // Se obtiene el objeto user guardado al iniciar sesion
-      const user = this.$store.getters.getUser;
+      const user = this.$getter.getUser();
 
       // Se crea objeto reconocible por el server
       const employee = {
@@ -70,7 +68,7 @@ export default {
         }
       };
 
-      let response = await this.requester.post(route, employee);
+      let response = await this.$requester.post(route, employee);
       this.list_employees = response;
       console.log(this.list_employees);
     }

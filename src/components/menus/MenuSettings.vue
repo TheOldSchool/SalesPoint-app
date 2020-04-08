@@ -20,7 +20,7 @@
         </button>
       </li>
       <li class="list-group-item list-group-item-action">
-        <button class="btn-action">
+        <button class="btn-action" v-on:click="$emit('change_window', 'inventory')">
           <img src="../../assets/icons/inventory.svg"
                width="30px">
           Inventario

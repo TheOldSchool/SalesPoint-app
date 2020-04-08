@@ -4,24 +4,27 @@
     <div class="container">
       <div class="row">
         <div class="col-md-3">
-          <button id="menu" class="btn">
-            <img src="../assets/icons/menu.svg" alt="menu" width="25px" v-show="session">
-            <p><strong class="text-light">SalesPoint</strong></p>
+          <button id="menu" class="btn" @click="$emit('toggle_categories')">
+            <img src="../assets/icons/menu.svg" alt="menu" width="25px" v-show="getCompany != 'SalesPoint'">
+            <p><strong class="text-light">{{getCompany}}</strong></p>
           </button>
         </div>
         <div class="col-lg-6">
-          <div class="container" v-show="session">
+          <div class="container" v-show="getCompany != 'SalesPoint'">
             <input type="text" name="input-search" id="input-search"
                  placeholder="Buscar">
           </div>
         </div>
         <div class="col-md-3 text-right">
-          <div class="dropdown" v-show="session">
-            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" 
+          <div class="dropdown" v-show="getCompany != 'SalesPoint'">
+            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-             <b class="text-light">
-              Carrito
-             </b>
+
+              <img src="https://image.flaticon.com/icons/svg/1656/1656507.svg" alt="cart"
+                class="mr-2" width="20px">
+              <b class="text-light">
+                Carrito ${{getTotal}} MXN
+              </b>
             </button>
             <div class="dropdown-menu">
               <MarketCar />
@@ -47,20 +50,25 @@ $(document).ready(function() {
 export default {
   name: 'Header',
   data: function() {
-    return {
+    return { }
+  },
+  computed: {
+    getTotal: function() {
+      let total = this.$store.getters.getTotal;
+      if(total != undefined)
+        return parseFloat(this.$store.getters.getTotal);
+      else
+        return 0.00;
+    },
+    getCompany: function() {
+      let user = this.$getter.getUser();
+      console.log(user);
+      return (user != undefined) ? user.company : 'SalesPoint';
     }
   },
-  // Session es para ver si se inicio sesion y ver la barra y carrito
-  props: ['session'],
   components: {
     MarketCar
   },
-  created: function() {
-    const user = this.$store.getters.getUser;
-    // Saber si cambiar a que se vean las barras y carrito
-    if(user != undefined)
-      this.$emit('header_alarm');
-  }
 }
 </script>
 

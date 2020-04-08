@@ -86,7 +86,16 @@ export default {
     }
   },
   methods: {
-    make_purchases: function() {
+    make_purchases: async function() {
+      const route = '/sale';
+      const user = this.$getter.getUser();
+      const sales = {
+        sale: this.$store.getters.getCar.getSale(user),
+        cart: this.$store.getters.getCar.getIngredientsNeeded()
+      };
+
+      const response = await this.$requester.post(route, sales);
+      console.log(response);
       this.$store.dispatch('makePurchases_action');
     }
   },

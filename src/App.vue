@@ -1,9 +1,11 @@
 <template>
   <div id="app" class="bg-light">
-    <Header :car="car" :session="session" @header_alarm="session = true" />
+    <Header :car="car" :session="session" @header_alarm="session = true"
+      @toggle_categories="show_categories = !show_categories" />
 
     <div id="content">
-      <router-view v-on:header_panel="config_init()" @set_car="prepare_car" />
+      <router-view v-on:header_panel="config_init()" @set_car="prepare_car"
+        :toggle_categories="show_categories"/>
     </div>
   </div>
 </template>
@@ -16,6 +18,7 @@ export default {
     return {
       session: false,
       car: null,
+      show_categories: true
     }
   },
   components: {

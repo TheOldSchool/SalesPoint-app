@@ -9,8 +9,14 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'jquery/src/jquery.js'
 import 'bootstrap/dist/js/bootstrap.min.js'
 
+import Getter from './res/Getter.js'
+import Requester from './res/Requester.js';
+
 Vue.config.productionTip = false;
 Vue.use(Vuex);
+
+Vue.prototype.$getter = Getter
+Vue.prototype.$requester = new Requester()
 
 new Vue({
   store,

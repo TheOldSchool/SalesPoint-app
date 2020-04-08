@@ -34,6 +34,63 @@ class Car {
   getTotal() {
     return this.subtotal - this.discount;
   }
+
+  getProducts() {
+    let products = '';
+    for(let i = 0; i < this.orders.length; i++) {
+      products += 'Orden #' + (i+1) + ' :\n';
+      const order_products = this.orders[i].getProducts();
+      for(let j = 0; j < order_products.length; j++)
+        products += order_products[j].name + '\t' + order_products[j].price + '\n';
+      products += '\n';
+    }
+
+    return products;
+  }
+
+  getSale(user) {
+    const products = this.getProducts();
+    const subtotal = this.getSubtotal();
+    const discount = this.getDiscount();
+    const total = this.getTotal();
+    const company = user.company;
+    const responsable = user.username;
+    const action = 'Venta de productos';
+    const state = 1;
+
+    return {
+      type: 'historical',
+      template: {
+        key: this.getRandomKey(),
+        company: company,
+        action: action,
+        responsable: responsable,
+        details: `Se realizo la venta de : \n\n${products}\n\nPor:\n\nSubtotal: ${subtotal}\nDescuento: ${discount}\nTotal: ${total}\n`,
+        states: state,
+        time: (new Date()).toLocaleString()
+      }
+    };
+  }
+
+  getIngredientsNeeded() {
+    let ingredients = [];
+    for(let i = 0; i < this.orders.length; i++)
+      ingredients = ingredients.concat(this.orders[i].getProducts());
+
+    return ingredients;
+  }
+
+  getRandomKey() {
+    let mask = 'abcdefghijklmnopqrstuvwxyz';
+    mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    mask += '0123456789';
+    let generated_key = '';
+
+    for (var i = 15; i > 0; --i)
+      generated_key += mask[Math.floor(Math.random() * mask.length)];
+    console.log('Generated', generated_key);
+    return generated_key;
+  }
 }
 
 module.exports = Car;

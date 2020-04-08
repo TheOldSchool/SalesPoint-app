@@ -146,16 +146,10 @@ export default {
   },
   methods: {
     send_user: async function(send_user) {
-      let url = 'http://localhost:8000/api/add_user';
+      let route = 'adduser';
       let data = {user: send_user};
-      const options = {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      };
-      let response = await fetch(url, options);
+
+      let response = await this.$requester.post(route, data);
       let json = await response.json();
       this.validate_response(json);
     },

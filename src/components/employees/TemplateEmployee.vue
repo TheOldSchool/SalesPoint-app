@@ -68,14 +68,11 @@
 
 <script>
 import Employee from '@/res/Employee.js';
-import Requester from '@/res/Requester.js';
 
 export default {
   name: 'TemplateEmployee',
   data: function() {
-    return {
-      requester: new Requester()
-    }
+    return { }
   },
   methods: {
     make_request: async function(data) {
@@ -83,7 +80,7 @@ export default {
       const route = '/addemployee';
 
       // postFile es un request que manda info y archivos como imagenes
-      const response = await this.requester.postFile(route, data);
+      const response = await this.$requester.postFile(route, data);
       console.log(response);
     },
     build_employee: function(event) {

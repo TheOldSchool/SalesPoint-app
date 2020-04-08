@@ -43,14 +43,11 @@
 </template>
 
 <script>
-import Requester from '@/res/Requester.js';
-
 export default {
   name: 'Employee',
   data: function() {
     return {
       hover: false,
-      requester: new Requester()
     }
   },
   props: ['employee', 'img', 'edit_access'],
@@ -74,7 +71,7 @@ export default {
         };
 
         // Requester es una clase con lo necesario para hacer un request
-        const response = await this.requester.post(route, employee);
+        const response = await this.$requester.post(route, employee);
 
         // El server regresa un array y si es [] es que se elimino
         if(response.length == 0)

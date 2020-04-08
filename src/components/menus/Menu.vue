@@ -21,8 +21,6 @@
 </template>
 
 <script>
-import Requester from '@/res/Requester.js';
-
 export default {
   name: 'Menu',
   data: function() {
@@ -37,7 +35,6 @@ export default {
         {name: 'Postres', url:'https://image.flaticon.com/icons/svg/918/918234.svg', value: 4},
         {name: 'Bebidas', url:'https://image.flaticon.com/icons/svg/600/600429.svg', value: 5},
       ],
-      requester: new Requester()
     }
   },
   methods: {
@@ -47,7 +44,7 @@ export default {
       // Si category es 99 entonces dame todos si no dame tal categoria
       const route = (category == 99) ? '/getallproduct' : '/getproducts';
       // Se obtiene el objeto user que se guardo en el login
-      const user = this.$store.getters.getUser;
+      const user = this.$getters.getUser;
       // Se crea objeto reconocible por el server
       const product = {
         product: {
@@ -59,7 +56,7 @@ export default {
         }
       };
 
-      let response = await this.requester.post(route, product);
+      let response = await this.$requester.post(route, product);
       this.$emit('changeMenu', response);
     },
   }

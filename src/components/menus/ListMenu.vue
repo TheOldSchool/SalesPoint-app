@@ -9,10 +9,10 @@
         </div>
       </div>
       <div class="col-sm-3" v-for="product in list_products" :key="product.key">
-        <div> 
+        <div>
           <Product :product="product" :img="'icons/laptop.svg'" :edit_access="false" 
             :delete_access="delete_access" @deleted="deleted_product" 
-            @pushing_product="send_product" />
+            @animation_ring="animation_ring" />
         </div>
       </div>
     </div>
@@ -21,7 +21,6 @@
 
 <script>
 import Product from '@/components/products/Product.vue';
-import Requester from '@/res/Requester.js';
 
 export default {
   name: 'ListMenu',
@@ -36,7 +35,6 @@ export default {
         desc: 'Agrega un nuevo producto',
         price: 'Agregar'
       },
-      requester: new Requester()
     }
   },
   props: ['menu', 'edit_page', 'delete_access'],
@@ -57,7 +55,7 @@ export default {
       // route es la ruta de server a la que ir
       const route = '/getallproduct';
       // Se obtiene el objeto user guardado al iniciar sesion
-      const user = this.$store.getters.getUser;
+      const user = this.$getter.getUser();
       // Se crea objeto reconocible con el server
       const product = {
         product: {
@@ -66,12 +64,12 @@ export default {
         }
       };
 
-      let response = await this.requester.post(route, product);
+      let response = await this.$requester.post(route, product);
       // Se actualiza la lista de productos
       this.list_products = response;
     },
-    send_product: function(selected_product) {
-      this.$emit('pushing_product', selected_product);
+    animation_ring: function() {
+      this.$emit('animation_ring');
     }
   },
   watch: {

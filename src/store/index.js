@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import Order from '@/res/Order.js';
 import Car from '@/res/Car.js';
 
 Vue.use(Vuex);
@@ -7,14 +8,19 @@ Vue.use(Vuex);
 export const store =  new Vuex.Store({
   state: {
     index: 0,
-    cars: [],
+    order: new Order(),
+    cars: [new Car()],
   },
   mutations: {
     addCar: function(state, new_car) {
       state.cars.push(new_car);
     },
-    addOrder: function(state, order) {
-      state.cars[state.index].addOrder(order);
+    addOrder: function(state) {
+      state.cars[state.index].addOrder(state.order);
+      state.order = new Order();
+    },
+    addProduct: function(state, product) {
+      state.order.addProduct(product);
     },
     makePurchases: function(state) {
       let tmp_cars = [];
@@ -34,8 +40,11 @@ export const store =  new Vuex.Store({
     addCar_action: function({commit}, car) {
       commit('addCar', car);
     },
-    addOrder_action: function({commit}, order) {
-      commit('addOrder', order);
+    addOrder_action: function({commit}) {
+      commit('addOrder');
+    },
+    addProduct_action: function({commit}, product) {
+      commit('addProduct', product);
     },
     makePurchases_action: function({commit}) {
       commit('makePurchases');
@@ -63,22 +72,8 @@ export const store =  new Vuex.Store({
     getProducts: function(state) {
       return state.cars[state.index].getOrders().getProducts();
     },
-    getRandomKey: function() {
-      let mask = 'abcdefghijklmnopqrstuvwxyz';
-      mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      mask += '0123456789';
-      let generated_key = '';
-
-      for (var i = 15; i > 0; --i)
-        generated_key += mask[Math.floor(Math.random() * mask.length)];
-      return generated_key;
+    getOrder: function(state) {
+      return state.order;
     },
-    getUser: function() {
-      const thereLocal = localStorage.getItem('user');
-      let user = (thereLocal == undefined) ?
-        JSON.parse(sessionStorage.getItem('user')) :
-        JSON.parse(localStorage.getItem('user'));
-      return user;
-    }
   }
 })

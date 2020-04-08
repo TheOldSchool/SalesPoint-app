@@ -34,7 +34,6 @@
 
 <script>
 import User from "@/res/User.js";
-import Requester from '@/res/Requester.js';
 
 export default {
   name: 'Login',
@@ -42,7 +41,6 @@ export default {
     return {
       db_error: false,
       remember_me: false,
-      requester: new Requester(),
     }
   },
   methods: {
@@ -54,8 +52,7 @@ export default {
       user.build(event, '');
       const serialize_user = user.serialize();
 
-      const response = await this.requester.post(route, serialize_user);
-      console.log(response);
+      const response = await this.$requester.post(route, serialize_user);
       this.validate_response(response);
     },
     validate_response: function(response) {

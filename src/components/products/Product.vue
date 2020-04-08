@@ -38,14 +38,11 @@
 </template>
 
 <script>
-import Requester from '@/res/Requester.js';
-
 export default {
   name: 'Product',
   data: function() {
     return {
       hover: false,
-      requester: new Requester()
     }
   },
   // product es el objeto Producto con la info
@@ -61,11 +58,13 @@ export default {
     },
     // Avisa que habra formulario de altas si es el cuadro de altas
     // O Agrega producto a la orden
-    try_emit: function() {
+    try_emit: async function() {
       if(this.edit_access)
         this.$emit('edit', true);
-      else
-        this.$emit('pushing_product', this.product);
+      else {
+        this.$emit('animation_ring');
+        this.$store.dispatch('addProduct_action', this.product);
+      }
     },
     delete_product: async function(key) {
       if(confirm('¿Desear eliminar el producto?')) {
@@ -77,7 +76,7 @@ export default {
           }
         };
 
-        const response = await this.requester.post(route, product);
+        const response = await this.$requester.post(route, product);
 
         // Si se elimino manda el emit de que si y si no de que no
         if(response.length == 0)

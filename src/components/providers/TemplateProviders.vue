@@ -82,26 +82,22 @@
 </template>
 
 <script>
-import Requester from '@/res/Requester.js';
-
 export default {
   name: 'TemplateProviders',
   data: function() {
-    return {
-      requester: new Requester(),
-    }
+    return { }
   },
   methods: {
     add_provider: async function(event) {
       const route = '/addprovider';
-      const user = this.$store.getters.getUser;
+      const user = this.$getter.getUser();
 
       // TODO: Hacer objeto Provider
       // Se crea un objeto reconocible por el server
       const provider = {
         type: 'provider',
         template: {
-          key: this.$store.getters.getRandomKey,
+          key: this.$getter.getRandomKey(),
           photo: 'http://localhost:8000/',
           name: event.target.company.value,
           address: event.target.address.value,
@@ -119,7 +115,7 @@ export default {
       formData.append('provider', JSON.stringify(provider));
       formData.append('img', event.target.logo.files[0]);
       // Mandar imagenes con postFile
-      const response = await this.requester.postFile(route, formData);
+      const response = await this.$requester.postFile(route, formData);
       console.log(response);
     },
 

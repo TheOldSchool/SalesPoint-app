@@ -56,14 +56,11 @@
 </template>
 
 <script>
-import Requester from '@/res/Requester.js';
-
 export default {
   name: 'Historical',
   data: function() {
     return {
       historical: [],
-      requester: new Requester()
     }
   },
   methods: {
@@ -94,7 +91,7 @@ export default {
     // route es la ruta del server a la cual ir
     const route = '/gethistorical';
     // Se obtiene usuario del login
-    const user = this.$store.getters.getUser;
+    const user = this.$getter.getUser();
     // Se crea objeto reconocible por el server
     const historial = {
       user: {
@@ -103,7 +100,7 @@ export default {
       }
     };
 
-    let response = await this.requester.post(route, historial);
+    let response = await this.$requester.post(route, historial);
     this.historical = response;
   }
 }
