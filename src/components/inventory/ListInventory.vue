@@ -143,7 +143,6 @@ export default {
       };
 
       const response = await this.make_request(route, inventory);
-      console.log(response);
       this.list_ingredients = response;
     },
     report: function() {

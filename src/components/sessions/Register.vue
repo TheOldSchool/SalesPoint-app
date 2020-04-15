@@ -150,7 +150,6 @@ export default {
   methods: {
     send_user: async function(send_user) {
       let route = '/adduser';
-      console.log(send_user);
       let response = await this.$requester.post(route, send_user.serialize());
       this.validate_response(send_user.user, response);
     },

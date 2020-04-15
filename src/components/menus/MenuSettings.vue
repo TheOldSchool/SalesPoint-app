@@ -71,7 +71,7 @@
         <button class="btn-action" v-on:click="exit()">
           <img src="https://image.flaticon.com/icons/svg/1246/1246273.svg"
                width="30px">
-          Cerrar sesión
+          Salir
         </button>
       </li>
 

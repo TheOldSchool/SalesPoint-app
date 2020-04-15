@@ -39,7 +39,12 @@
       <div class="form-row">
         <div class="form-group col-md-6">
           <label for="price">Precio</label>
-          <input type="text" class="form-control" id="price" placeholder="65.50" required>
+          <div class="input-group mb-2">
+            <div class="input-group-prepend">
+              <div class="input-group-text">$</div>
+            </div>
+            <input type="number" class="form-control" id="price" placeholder="65.50" required>
+          </div>
         </div>
         <div class="form-group col-md-6">
           <div class="row">
@@ -108,6 +113,7 @@
 
 <script>
 import Product from "@/res/Product.js";
+import Validator from '@/res/Validator.js';
 
 export default {
   name: "TemplateProduct",
@@ -130,6 +136,7 @@ export default {
       message_alert: '',
       ingredients: [],
       selected_ingredients: [],
+      validator: new Validator()
     }
   },
   props: ['product'],
@@ -155,19 +162,26 @@ export default {
     add_product: function(event) {
       const route = '/addhistorical';
       let img = event.target.product_img.files[0];
+      const err = this.validator.isEmpty(this.selected_ingredients);
 
-      // Genera un objeto Producto
-      let product = new Product(this.$getter, 'add');
-      // build para crear su info apartir del event del formulario
-      product.build(event, this.selected_ingredients);
+      if(err.length == 0) {
+        // Genera un objeto Producto
+        let product = new Product(this.$getter, 'add');
+        // build para crear su info apartir del event del formulario
+        product.build(event, this.selected_ingredients);
 
-      // Enviar imagenes con FormData
-      let formData = new FormData();
-      formData.append('img', img);
-      formData.append('product', JSON.stringify(product.serialize()));
-      const historical = this.$historical.renderHistorical(product.serialize().product);
-      this.make_request(route, historical);
-      this.send_product(formData);
+        // Enviar imagenes con FormData
+        let formData = new FormData();
+        formData.append('img', img);
+        formData.append('product', JSON.stringify(product.serialize()));
+        const historical = this.$historical.renderHistorical(product.serialize().product);
+        this.make_request(route, historical);
+        this.send_product(formData);
+      } else {
+        this.okay = false;
+        this.alert_show = true;
+        this.message_alert = err;
+      }
     },
     update: async function(event) {
       const route = '/updproduct';

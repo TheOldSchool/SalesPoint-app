@@ -14,7 +14,7 @@
             <div class="col">
               <form @submit.prevent="restoreFromFile($event)">
                 <div class="form-group">
-                  <label for="physic">Respaldo archivo</label>
+                  <label for="physic">Restaurar de archivo</label>
                   <input id="physic" type="file" name="physic" class="form-control">
                   <input class="btn btn-success btn-block mt-3"
                     type="submit" value="Recuperar">
@@ -22,7 +22,7 @@
               </form>
             </div>
             <div class="col">
-              <label for="virtual">Respaldo en el sistema</label>
+              <label for="virtual">Respaldar información</label>
               <input id="virtual" type="text" name="virtual" class="form-control" v-model="last" disabled>
               <button class="btn btn-primary btn-block mt-3" id="backup-btn" @click="makeBackup()">
                 Respaldar
@@ -105,8 +105,7 @@ export default {
             }
           };
 
-          const response = await this.$requester.post(route, params);
-          console.log(response);
+          await this.$requester.post(route, params);
         }
       }
     },

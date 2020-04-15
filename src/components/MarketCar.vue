@@ -139,8 +139,7 @@ export default {
         cart: this.$store.getters.getCar.getIngredientsNeeded()
       };
 
-      const response = await this.$requester.post(route, sales);
-      console.log(response);
+      await this.$requester.post(route, sales);
       this.$store.dispatch('makePurchases_action');
     },
     generate_ticket: async function() {

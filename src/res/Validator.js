@@ -41,6 +41,17 @@ class Validator {
     else
       return 'La contraseña debe cumplir los requisitos del sistema.';
   }
+
+  validNumeric(val) {
+    if(isNaN(val))
+      return 'El valor debe ser númerico';
+    else
+      return '';
+  }
+
+  isEmpty(struct) {
+    return (struct.length == 0) ? 'Uno o varios de los campos obligatorios esta vacio.' : '';
+  }
 }
 
 module.exports = Validator;

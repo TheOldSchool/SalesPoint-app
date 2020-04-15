@@ -90,23 +90,36 @@
               v-model="user.rfc">
           </div>
           <div class="col-md-6" v-if="user.company_turn">
-            <label for="turn">Regimen fiscal</label>
-            <input id="turn" type="text" name="turn" class="form-control" placeholder="Persona fisica"
-              v-model="user.company_turn">
+            <label for="regime">Régimen Fiscal</label>
+            <select name="regime" id="regime" class="form-control" v-model="user.company_turn">
+              <option value="p_physical">Persona Fisica</option>
+              <option value="p_moral">Persona Moral</option>
+            </select>
           </div>
         </div>
       </div>
       <input type="submit" class="btn btn-primary btn-block" value="Cambiar">
     </form>
+
+    <div class="alert" :class="{ 'alert-primary': okay, 'alert-danger': !okay }" role="alert" 
+      v-show="alert_show" @click="alert_show = false">
+      {{ message_alert }}
+    </div>
   </div>
 </template>
 
 <script>
+import Validator from '@/res/Validator.js';
+
 export default {
   name: 'Profile',
   data: function() {
     return {
-      user: this.$getter.getUser()
+      okay: true,
+      alert_show: false,
+      error_msg: '',
+      user: this.$getter.getUser(),
+      validator: new Validator()
     }
   },
   methods: {
@@ -119,10 +132,43 @@ export default {
         }
       };
 
-      const response = await this.$requester.post(route, params);
-      if(response.length == 0)
+      let err = this.validator.validPass(this.user.password);
+
+      if(err.length == 0) {
+        err = this.validator.validPhone(this.user.cellphone);
+        if(err.length == 0) {
+          var cod = document.getElementById("regime").value;
+          var comp = cod.localeCompare('p_physical');
+          err  = this.validator.validRFC(this.user.rfc, comp);
+
+          const response = await this.$requester.post(route, params);
+          this.validate_response(response);
+        }
+      }
+
+      this.validate_msg(err);
+    },
+    validate_response: function(response) {
+      if(response.length == 0) {
+        this.okay = true;
+        this.alert_show = true;
+        this.message_alert = 'Los datos se han agregado exitosamente';
         this.$getter.setUser(this.user);
+        this.clean();
+      } else {
+        this.okay = false;
+        this.alert_show = true;
+        this.message_alert = 'Esto es penoso, por alguna razón no se pudo concretar la operación. Intentalo más tarde.';
+      }
+    },
+    validate_msg: function(response) {
+      if(response.length != 0){
+        this.okay = false;
+        this.alert_show = true;
+        this.message_alert = response;
+      }
     }
+
   }
 }
 </script>
@@ -137,4 +183,14 @@ h4 {
 table {
   margin: 50px 0px;
 }
+
+.alert {
+  position: fixed;
+  bottom: 0;
+  width: 70%;
+  margin-left: 50%;
+  left: -28%;
+  margin-bottom: 50px;
+}
+
 </style>

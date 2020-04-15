@@ -46,7 +46,6 @@ export default {
       const route = (category == 99) ? '/getallproduct' : '/getproducts';
       // Se obtiene el objeto user que se guardo en el login
       const user = this.$getter.getUser();
-      console.log(user);
       // Se crea objeto reconocible por el server
       const product = {
         product: {
@@ -66,9 +65,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-#settings img {
-  margin: 0px 10px;
-} ul { list-style: none; }
+ul { list-style: none; }
 
 button img {
   float: left;

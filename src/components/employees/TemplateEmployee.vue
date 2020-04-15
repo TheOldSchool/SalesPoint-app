@@ -76,6 +76,7 @@
 
 <script>
 import Employee from '@/res/Employee.js';
+import Validator from '@/res/Validator.js';
 
 export default {
   name: 'TemplateEmployee',
@@ -83,7 +84,8 @@ export default {
     return {
       okay: true,
       alert_show: false,
-      message_alert: ''
+      message_alert: '',
+      validator: new Validator()
     }
   },
   props: ['employee'],
@@ -112,14 +114,19 @@ export default {
       let employee = new Employee(user.company);
       // Para generar la info del empleado apartir del form se usa el build y se manda un event
       employee.build(event);
+      const err = this.validator.validPhone(employee.employee.cellphone);
 
-      // Para enviar un archivo al server se hace enviando un objeto FormData
-      let formData = new FormData();
-      // Si es una img siempre es img del lado izquierdo
-      formData.append('img', event.target.photo.files[0]);
-      // Si es un FormData la info se tiene que pasar a un JSON desde el serialize
-      formData.append('employee', JSON.stringify(employee.serialize()));
-      this.make_request(route, formData);
+      if(err.length == 0) {
+        // Para enviar un archivo al server se hace enviando un objeto FormData
+        let formData = new FormData();
+        // Si es una img siempre es img del lado izquierdo
+        formData.append('img', event.target.photo.files[0]);
+        // Si es un FormData la info se tiene que pasar a un JSON desde el serialize
+        formData.append('employee', JSON.stringify(employee.serialize()));
+        this.make_request(route, formData);
+      }
+
+      this.validate_msg(err);
     },
     update: function(event) {
       const route = '/updemployee';
@@ -169,7 +176,13 @@ export default {
         this.alert_show = true;
         this.message_alert = 'Esto es penoso, por alguna razón no se pudo agregar a este empleado. Intentalo más tarde.';
       }
-
+    },
+    validate_msg: function(response) {
+      if(response.length != 0){
+        this.okay = false;
+        this.alert_show = true;
+        this.message_alert = response;
+      }
     }
   },
   watch: {
@@ -182,7 +195,6 @@ export default {
     this.clean();
       if(this.employee != undefined)
         this.set_employee();
-    console.log(this.employee);
   }
 }
 </script>

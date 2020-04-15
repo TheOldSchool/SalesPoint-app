@@ -93,13 +93,16 @@
 
 <script>
 import Provider from '@/res/Provider.js';
+import Validator from '@/res/Validator.js';
+
 export default {
   name: 'TemplateProviders',
   data: function() {
     return {
       okay: true,
       alert_show: false,
-      message_alert: ''
+      message_alert: '',
+      validator: new Validator()
     }
   },
   props:['provider'],
@@ -115,14 +118,25 @@ export default {
 
       const provider = new Provider(this.$getter);
       provider.build(event);
+      let err = this.validator.validPhone(provider.provider.tel);
 
-      // Para mandar una imagen es con los FormData
-      let formData = new FormData();
-      formData.append('provider', JSON.stringify(provider.serialize().provider));
-      formData.append('img', event.target.logo.files[0]);
-      // Mandar imagenes con postFile
-      const response = await this.$requester.postFile(route, formData);
-      this.validate_response(response);
+      if(err.length == 0) {
+          var cod = document.getElementById("regime").value;
+          var comp = cod.localeCompare('p_physical');
+          err = this.validator.validRFC(provider.provider.rfc, comp);
+
+          if(err.length == 0) {
+            // Para mandar una imagen es con los FormData
+            let formData = new FormData();
+            formData.append('provider', JSON.stringify(provider.serialize().provider));
+            formData.append('img', event.target.logo.files[0]);
+            // Mandar imagenes con postFile
+            const response = await this.$requester.postFile(route, formData);
+            this.validate_response(response);
+        }
+      }
+
+      this.validate_msg(err);
     },
     update: async function(event) {
       const route = '/updprovider';
@@ -153,6 +167,13 @@ export default {
         this.okay = false;
         this.alert_show = true;
         this.message_alert = 'Esto es penoso, por alguna razón no se pudo concretar la operación. Intentalo más tarde.';
+      }
+    },
+    validate_msg: function(response) {
+      if(response.length != 0){
+        this.okay = false;
+        this.alert_show = true;
+        this.message_alert = response;
       }
     }
   },

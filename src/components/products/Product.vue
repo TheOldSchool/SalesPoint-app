@@ -80,10 +80,9 @@ export default {
         const response = await this.$requester.post(route, product);
         const historical = await this.$historical.renderHistorical(product.product);
         const response_htl = await this.$requester.post('/addhistorical', historical);
-        console.log(response_htl);
 
         // Si se elimino manda el emit de que si y si no de que no
-        if(response.length == 0)
+        if(response.length == 0 && response_htl.length == 0)
           this.$emit('deleted', true);
         else
           this.$emit('deleted', false);

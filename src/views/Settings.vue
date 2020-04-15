@@ -84,6 +84,9 @@ export default {
 <style scoped>
 .row {
     width: 100%;
+} .col {
+  min-height: 100vh;
+  margin-bottom: 60px;
 }
 
 #admin-product {
