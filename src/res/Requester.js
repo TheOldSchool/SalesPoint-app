@@ -19,6 +19,7 @@ class Requester {
 
   async post(route, params) {
     this.config.method = 'POST';
+    this.config.headers = { 'Content-Type': 'application/json' };
     this.config.body = JSON.stringify(params);
     return await this.request(route);
   }
@@ -32,7 +33,6 @@ class Requester {
 
   async request(route) {
     const url = this.url + route;
-    console.log(url);
     const response = await fetch(url, this.config);
     return await response.json();
   }

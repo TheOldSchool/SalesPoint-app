@@ -3,7 +3,7 @@
     <Header :car="car" :session="session" @header_alarm="session = true"
       @toggle_categories="show_categories = !show_categories" />
 
-    <div id="content">
+    <div id="content" class="container">
       <router-view v-on:header_panel="config_init()" @set_car="prepare_car"
         :toggle_categories="show_categories"/>
     </div>
@@ -12,6 +12,7 @@
 
 <script>
 import Header from '@/components/Header.vue';
+
 export default {
   name: 'App',
   data: function() {
@@ -22,7 +23,7 @@ export default {
     }
   },
   components: {
-    Header
+    Header,
   },
   methods: {
     config_init: function() {
@@ -30,6 +31,13 @@ export default {
     },
     prepare_car: function(car) {
       this.car = car;
+    }
+  },
+  watch: {
+    $route: function() {
+      const user = this.$getter.getUser();
+      if(this.$route.name != 'home' && user == undefined)
+        this.$router.push('/');
     }
   }
 }
@@ -55,7 +63,12 @@ font-face {
   font-family: 'Varela Round', sans-serif;
 }
 
+#app {
+  max-width: 100%;
+}
+
 #content {
+  max-width: 100%;
   min-height: 100vh;
   background-color: white;
 }
@@ -71,4 +84,9 @@ font-face {
 .shadow {
   box-shadow: 0px 7px 42px -6px rgba(0,0,0,0.75) !important;
 }
+
+#table-report td {
+  padding: 0px 6px;
+}
+
 </style>

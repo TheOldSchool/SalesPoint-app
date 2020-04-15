@@ -26,7 +26,7 @@
     </button>
 
     <div class="btn-group" role="group" v-if="!edit_access && delete_access">
-      <button class="btn btn-outline-danger" @click="delete_product(product.key)" >
+      <button class="btn btn-outline-danger" @click="delete_product()" >
         Eliminar
       </button>
     </div>
@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import Product from '@/res/Product.js';
+
 export default {
   name: 'Product',
   data: function() {
@@ -61,22 +63,24 @@ export default {
     try_emit: async function() {
       if(this.edit_access)
         this.$emit('edit', true);
-      else {
+      else if(!this.edit_access && this.delete_access) {
+        this.$emit('update', this.product);
+      } else {
         this.$emit('animation_ring');
         this.$store.dispatch('addProduct_action', this.product);
       }
     },
-    delete_product: async function(key) {
+    delete_product: async function() {
       if(confirm('¿Desear eliminar el producto?')) {
         const route = '/delproduct';
-        const product = {
-          product: {
-            type: 'product',
-            template: { key: key }
-          }
-        };
+        const delproduct = new Product(this.$getter, 'del');
+        delproduct.copy(this.product);
 
+        const product = delproduct.serialize();
         const response = await this.$requester.post(route, product);
+        const historical = await this.$historical.renderHistorical(product.product);
+        const response_htl = await this.$requester.post('/addhistorical', historical);
+        console.log(response_htl);
 
         // Si se elimino manda el emit de que si y si no de que no
         if(response.length == 0)

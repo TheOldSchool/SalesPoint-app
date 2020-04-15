@@ -1,12 +1,6 @@
 <template lang="html">
   <div id="menu-box" class="container">
     <!-- Menu de productos en el apartado de ventas como filtros de busqueda !-->
-    <router-link id="settings" class="btn" to="/settings">
-      <img src="https://image.flaticon.com/icons/svg/1242/1242392.svg"
-           width="20px">
-      Opciones
-    </router-link>
-
     <h6 class="text-info">Platos principales</h6>
     <ul class="list-group list-group-flush">
       <li class="list-group-item list-group-item-action" v-for="product in menu" v-bind:key="product.name">
@@ -15,6 +9,13 @@
                width="30px">
          {{product.name}}
         </button>
+      </li>
+      <li class="list-group-item list-group-item-action">
+        <router-link id="settings" class="btn-action" to="/settings">
+          <img src="https://image.flaticon.com/icons/svg/1242/1242392.svg"
+            width="30px">
+          Opciones
+        </router-link>
       </li>
     </ul>
   </div>
@@ -44,7 +45,8 @@ export default {
       // Si category es 99 entonces dame todos si no dame tal categoria
       const route = (category == 99) ? '/getallproduct' : '/getproducts';
       // Se obtiene el objeto user que se guardo en el login
-      const user = this.$getters.getUser;
+      const user = this.$getter.getUser();
+      console.log(user);
       // Se crea objeto reconocible por el server
       const product = {
         product: {
@@ -64,13 +66,9 @@ export default {
 </script>
 
 <style lang="css" scoped>
-#settings {
-  position: fixed;
-  bottom: 0;
-  padding: 20px;
-} #settings img {
+#settings img {
   margin: 0px 10px;
-}
+} ul { list-style: none; }
 
 button img {
   float: left;
@@ -78,6 +76,9 @@ button img {
 
 .btn-action {
   border: none;
+  color: #333;
+  width: 100%;
+  text-align: justify;
   background-color: transparent;
 } .btn-action img {
   padding-right: 10px;

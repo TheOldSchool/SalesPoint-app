@@ -13,6 +13,7 @@ export const store =  new Vuex.Store({
   },
   mutations: {
     addCar: function(state, new_car) {
+      state.index++;
       state.cars.push(new_car);
     },
     addOrder: function(state) {
@@ -34,6 +35,26 @@ export const store =  new Vuex.Store({
       state.cars = tmp_cars;
       if(state.cars.length == 0)
         state.cars.push(new Car());
+    },
+    editOrder: function(state, index) {
+      state.order = state.cars[state.index].orders[index];
+      state.cars[state.index].orders.splice(index, 1);
+    },
+    changeCar: function(state, avance) {
+      if(state.index == 0 && avance < 0)
+        return;
+      else if(state.index == state.cars.length -1 && avance > 0)
+        return;
+      state.index += avance;
+    },
+    removeCar: function(state) {
+      const i = state.index;
+      if(state.cars.length == 1)
+        state.cars.push(new Car());
+      else
+        state.index = 0;
+
+      state.cars.splice(i, 1);
     }
   },
   actions: {
@@ -48,6 +69,15 @@ export const store =  new Vuex.Store({
     },
     makePurchases_action: function({commit}) {
       commit('makePurchases');
+    },
+    editOrder_action: function({commit}, index) {
+      commit('editOrder', index);
+    },
+    changeCar_action: function({commit}, avance) {
+      commit('changeCar', avance);
+    },
+    removeCar_action: function({commit}, index) {
+      commit('removeCar', index);
     }
   },
   getters: {

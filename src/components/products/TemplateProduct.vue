@@ -1,8 +1,7 @@
 <template>
   <div id="template-product" class="container">
     <!-- Altas de productos !-->
-    <form v-on:submit.prevent="add_product">
-      <h4><b>Panel de control</b></h4>
+    <form v-on:submit.prevent="add_or_update">
       <table>
         <tr>
           <td>
@@ -17,7 +16,11 @@
 
       <div class="form-group">
         <label for="photo">Icono de Producto</label>
-        <input type="file" class="form-control-file" id="product_img" name="product_img">
+        <input type="file" class="form-control-file" id="product_img" name="product_img"
+          v-if="product == undefined" required>
+        <div v-else>
+          <img :src="product.photo" alt="perfil" class="rounded" width="20%">
+        </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-12">
@@ -44,7 +47,7 @@
           <div class="col-sm-6">
             <label for="ingredients_product">Ingredientes</label>
 
-            <select id="ingredients_product" class="form-control" name="ingredients_product">
+            <select id="ingredients_product" class="form-control" name="ingredients_product" required>
               <option selected>Choose...</option>
               <option v-for="(ingredient, index) in ingredients" v-bind:key="index"
                 :value="index">
@@ -57,7 +60,7 @@
           <div class="col-sm-6">
             <label for="amounts">Cantidad</label>
             <input id="amounts" class="form-control" type="number" name="amounts"
-              placeholder="6">
+              placeholder="6" >
           </div>
           <div class="container">
             <button type="button" class="btn btn-block btn-success mt-3" @click="add_ingredient()">
@@ -71,7 +74,7 @@
       <div class="form-row">
         <div class="form-group col">
           <label for="category">Categoria</label>
-          <select id="category" class="form-control" name="category">
+          <select id="category" class="form-control" name="category" required>
             <option v-for="category in categories" :value="category.type" 
               v-bind:key="category.type">
               {{category.name}}
@@ -129,46 +132,61 @@ export default {
       selected_ingredients: [],
     }
   },
+  props: ['product'],
   methods: {
-    send_product: async function(event, product) {
+    send_product: async function(product) {
       // route es la ruta del server a la cual ir
       const route = '/addproduct';
 
       // Enviar archivos con postFile
       const response = await this.$requester.postFile(route, product);
-      this.validate_response(event, response);
+      this.validate_response(response);
     },
     make_request: async function(route, params) {
       const response = await this.$requester.post(route, params);
       return response;
     },
+    add_or_update: function(event) {
+      if(this.product != undefined)
+        this.update(event);
+      else
+        this.add_product(event);
+    },
     add_product: function(event) {
-      // Se genera una key aleatoria con $store
-      let key = this.$getter.getRandomKey();
+      const route = '/addhistorical';
       let img = event.target.product_img.files[0];
-      // Se obtiene el objeto user del login
-      const user = this.$getters.getUser();
 
       // Genera un objeto Producto
-      let product = new Product(key, user);
+      let product = new Product(this.$getter, 'add');
       // build para crear su info apartir del event del formulario
       product.build(event, this.selected_ingredients);
-      product.setAction(2);
 
       // Enviar imagenes con FormData
       let formData = new FormData();
       formData.append('img', img);
       formData.append('product', JSON.stringify(product.serialize()));
-      this.send_product(event.target, formData);
+      const historical = this.$historical.renderHistorical(product.serialize().product);
+      this.make_request(route, historical);
+      this.send_product(formData);
     },
-    validate_response: function(event, response) {
+    update: async function(event) {
+      const route = '/updproduct';
+      const product = new Product(this.$getter, 'upd');
+      product.copy(this.product);
+      product.build(event, this.selected_ingredients);
+      const response = await this.make_request(route, product.serialize());
+      const historical = this.$historical.renderHistorical(product.serialize().product);
+      this.make_request('/addhistorical', historical);
+      this.validate_response(response);
+    },
+    validate_response: function(response) {
       if(response.length == 0) {
         this.okay = true;
-        this.clean(event);
-        this.message_alert = 'Se agregó producto correctamente';
+        this.clean();
+        this.message_alert = 'Los datos se han agregado exitosamente';
       } else {
         this.okay = false;
-        this.message_alert = 'Hubo un problema al agregar el producto';
+        this.message_alert = 'Esto es penoso, por alguna razón no se pudo agregar a este empleado. Intentalo más tarde.';
       }
 
       this.alert_show = true;
@@ -178,17 +196,21 @@ export default {
       const params = {
         inventory: {
           type: 'inventory',
-          template: { company: this.$getters.getUser().company }
+          template: { company: this.$getter.getUser().company }
         }
       };
 
       this.ingredients = await this.make_request(route, params);
     },
+    // Se agrega un ingrediente a la lista de ingredientes
     add_ingredient: function() {
       const index = document.getElementById('ingredients_product').value;
       const ingredient = this.ingredients[index].name;
       const key = this.ingredients[index].key;
       const amounts = document.getElementById('amounts').value;
+      // name el nombre del ingrediente (se muestra en pantall)
+      // amount la cantidad del ingrediente (se muestra en pantalla)
+      // key la clave del ingrediente (no se muestra en pantalla)
       const result = {
         name: ingredient,
         amount: amounts,
@@ -197,18 +219,54 @@ export default {
 
       this.selected_ingredients.push(result);
     },
-    clean: function(target) {
-      console.log(target);
-      target.name.value = '';
-      target.desc.value = '';
-      target.price.value = '';
-      target.amounts.value = '';
-      target.product_img.value = null;
+    // Cada alta se resetean los campos
+    clean: function() {
+      document.getElementById('name').value = '';
+      document.getElementById('desc').value = '';
+      document.getElementById('price').value = '';
+      document.getElementById('amounts').value = '';
+      const img = document.getElementById('product_img');
+      if(img != undefined)
+        img.value = null;
       this.selected_ingredients = [];
     }
   },
+  watch: {
+    // Establece los datos del producto a editar
+    ingredients: function() {
+      if(this.product != undefined) {
+        document.getElementById('name').value = this.product.name;
+        document.getElementById('desc').value = this.product.desc;
+        document.getElementById('price').value = this.product.price;
+        document.getElementById('category').value = this.product.category;
+
+        const product_ingredients = this.product.ingredients.split(',');
+
+        for(let i = 0; i < product_ingredients.length; i++) {
+          const ingrxamount = product_ingredients[i].split('x');
+
+          for(let j = 0; j < this.ingredients.length; j++) {
+
+            if(this.ingredients[j].key == ingrxamount[0]) {
+              const result = {
+                name: this.ingredients[j].name,
+                amount: ingrxamount[1],
+                key: product_ingredients[i]
+              };
+              this.selected_ingredients.push(result);
+            }
+
+          }
+
+        }
+      }
+    }
+  },
   created: async function() {
-    this.getIngredients();
+    await this.getIngredients();
+  },
+  mounted: function() {
+    this.clean();
   }
 };
 </script>

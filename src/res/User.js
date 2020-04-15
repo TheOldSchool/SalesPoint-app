@@ -23,7 +23,7 @@ class User {
     this.user.company = company;
     this.user.cellphone = (target.cellphone) ? target.cellphone.value : '';
     this.user.gender = (target.gender) ? target.gender.value : '';
-    this.user.company_turn = (target.company_turn) ? target.company_turn.value : '';
+    this.user.company_turn = (target.regime) ? target.regime.value : '';
     this.user.rfc = (target.rfc) ? target.rfc.value : '';
     this.user.address = (target.address) ? target.address.value : '';
     this.user.colony = (target.colony) ? target.colony.value : '';

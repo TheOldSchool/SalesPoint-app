@@ -132,6 +132,7 @@ export default {
 
 #market {
   height: 100vh;
+  margin-bottom: 500px;
   background-color: #fff;
 }
 

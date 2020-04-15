@@ -9,13 +9,13 @@
           <div class="col">
             <label for="name">Nombre</label>
             <input type="text" class="form-control" id="name" name="name"
-              placeholder="Tomates" >
+              placeholder="Tomates" required>
           </div>
 
           <div class="col">
             <label for="amount">Cantidad</label>
             <input type="number" class="form-control" id="amount" name="amount"
-              placeholder="6" >
+              placeholder="6" required>
           </div>
 
         </div>
@@ -36,8 +36,8 @@ export default {
   },
   methods: {
     add_ingredients: async function(event) {
-      const user = this.$getters.getUser();
-      let key = this.$getters.getRandomKey();
+      const user = this.$getter.getUser();
+      let key = this.$getter.getRandomKey();
       const route = '/addinventory';
       let inventory = {
         inventory: {
@@ -53,7 +53,12 @@ export default {
       const response = await this.$requester.post(route, inventory);
       if(response.length == 0)
         this.$emit('refresh');
+      this.clean();
     },
+    clean: function() {
+      document.getElementById('name').value = '';
+      document.getElementById('amount').value = '';
+    }
   }
 }
 </script>

@@ -3,20 +3,14 @@
     <!-- Contiene barra de busqueda y carrito !-->
     <div class="container">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-6">
           <button id="menu" class="btn" @click="$emit('toggle_categories')">
-            <img src="../assets/icons/menu.svg" alt="menu" width="25px" v-show="getCompany != 'SalesPoint'">
+            <img src="../assets/icons/menu.svg" alt="menu" width="25px" v-show="session">
             <p><strong class="text-light">{{getCompany}}</strong></p>
           </button>
         </div>
-        <div class="col-lg-6">
-          <div class="container" v-show="getCompany != 'SalesPoint'">
-            <input type="text" name="input-search" id="input-search"
-                 placeholder="Buscar">
-          </div>
-        </div>
-        <div class="col-md-3 text-right">
-          <div class="dropdown" v-show="getCompany != 'SalesPoint'">
+        <div class="col-md-6 text-right">
+          <div class="dropdown" v-show="session">
             <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
@@ -50,7 +44,9 @@ $(document).ready(function() {
 export default {
   name: 'Header',
   data: function() {
-    return { }
+    return {
+      session: false
+    }
   },
   computed: {
     getTotal: function() {
@@ -62,19 +58,28 @@ export default {
     },
     getCompany: function() {
       let user = this.$getter.getUser();
-      console.log(user);
-      return (user != undefined) ? user.company : 'SalesPoint';
+      return (user != undefined) ? user.company : 'SalesPoint v1 2020';
     }
   },
   components: {
     MarketCar
   },
+  watch: {
+    $route: function() {
+      const user = this.$getter.getUser();
+      this.session = (user != undefined) ? true : false;
+    }
+  }
 }
 </script>
 
 <style lang="css" scoped>
+::placeholder {
+  color: #DBDBDB;
+}
+
 #header {
-  width: 100%;
+  max-width: 100%;
   min-height: 40px;
   background-color: var(--main-green);
   border-bottom: 2px solid var(--dark-green);

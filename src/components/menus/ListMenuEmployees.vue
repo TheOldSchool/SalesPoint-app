@@ -1,6 +1,13 @@
 <template>
   <div id="listemployee" class="container">
     <!-- Se crea listado de empleados !-->
+    <table id="table-report" v-if="delete_access">
+      <tr>
+        <td><b>Reporte de empleados</b></td>
+        <td><button class="btn btn-success" @click="report">Generar</button></td>
+      </tr>
+    </table>
+
     <div class="row">
       <div class="col-sm-3" v-if="edit_page">
         <div>
@@ -11,7 +18,7 @@
       <div class="col-sm-3" v-for="employee in list_employees" :key="employee.email">
         <div>
           <Employee :employee="employee" :img="'icons/laptop.svg'" :edit_access="false"
-            :delete_access="delete_access" @deleted="deleted_employee" />
+            :delete_access="delete_access" @deleted="deleted_employee" @update="update" />
         </div>
       </div>
     </div>
@@ -49,6 +56,9 @@ export default {
     emit_edit: function() {
       this.$emit('edit', true);
     },
+    update: function(employee) {
+      this.$emit('update', employee);
+    },
     deleted_employee: function(state) {
       // Si se elimina se manda a actualizar la lista
       if(state)
@@ -70,7 +80,28 @@ export default {
 
       let response = await this.$requester.post(route, employee);
       this.list_employees = response;
-      console.log(this.list_employees);
+    },
+    report: function() {
+      let inventory = [];
+      let content = [];
+      let total = 0;
+      inventory.push(['Correo electronico', 'Nombre', 'Genero', 'Cargo', '# Tel.']);
+      for(let i = 0; i < this.list_employees.length; i++) {
+        content.push([
+            this.list_employees[i].email,
+            this.list_employees[i].name,
+            (this.list_employees[i].gender == 0) ? 'Hombre' : 'Mujer',
+            this.list_employees[i].position,
+            this.list_employees[i].cellphone
+          ]
+        );
+        total++;
+      }
+      content.push(['Total', '', '', '', total]);
+      inventory.push(content);
+
+      this.$reports.write('reporte_empleados.pdf', inventory);
+
     }
   },
   created: async function() {
@@ -85,5 +116,9 @@ export default {
   padding-top: 40px;
   text-align: center;
   background-color: #fff;
+}
+
+.row {
+  margin-top: 30px;
 }
 </style>

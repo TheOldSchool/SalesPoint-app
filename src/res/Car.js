@@ -54,7 +54,7 @@ class Car {
     const discount = this.getDiscount();
     const total = this.getTotal();
     const company = user.company;
-    const responsable = user.username;
+    const responsable = (user.username) ? user.username : user.name;
     const action = 'Venta de productos';
     const state = 1;
 
@@ -88,7 +88,6 @@ class Car {
 
     for (var i = 15; i > 0; --i)
       generated_key += mask[Math.floor(Math.random() * mask.length)];
-    console.log('Generated', generated_key);
     return generated_key;
   }
 }

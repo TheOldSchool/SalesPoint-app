@@ -7,7 +7,8 @@
       <div class="col-lg-12 text-center">
         <img id="icon" :src="require(`@/assets/${img}`)" alt="icon" width="80%"
           v-if="edit_access" >
-        <img id="icon" :src="employee.photo" alt="icon" width="80%" v-else>
+        <img id="icon" :src="employee.photo" alt="icon" width="80%"
+          height="120px" v-else>
       </div>
       <div class="col-lg-12">
         <h6><b :class="{ card_hover_text: hover, opacity: edit_access }">{{employee.name}}</b></h6>
@@ -56,6 +57,8 @@ export default {
     try_emit: function() {
       if(this.edit_access)
         this.$emit('edit', true);
+      else
+        this.$emit('update', this.employee);
     },
     delete_employee: async function(email) {
       if(confirm('¿Desear eliminar este empleado?')) {

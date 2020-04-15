@@ -11,15 +11,17 @@
         <div class="col-md-8">
           <label for="search_historial">Buscar</label>
           <input class="form-control" type="text" name="search_historial" 
-            id="search_historial" placeholder="Buscar">
+            id="search_historial" placeholder="Buscar" v-model="text">
         </div>
         <div class="col">
           <label for="filters">Filtro</label>
-          <select id="filters" class="form-control" name="filters">
+          <select id="filters" class="form-control" name="filters" v-model="filter">
             <option value="99">Todos</option>
             <option value="0">Compras</option>
             <option value="1">Ventas</option>
             <option value="2">Altas</option>
+            <option value="3">Bajas</option>
+            <option value="4">Modificaciones</option>
           </select>
         </div>
       </div>
@@ -35,9 +37,9 @@
 
     <div class="container" id="historical-stack" v-else>
       <div class="list-group">
-        <a v-for="fact in historical" v-bind:key="fact.key" 
+        <a v-for="(fact, index) in historical" v-bind:key="fact.key" 
           href="#" class="list-group-item list-group-item-action" 
-          :class="getClasses(fact.state)">
+          :class="getClasses(fact.state)" @click.stop.prevent="report(index)">
 
           <div class="d-flex w-100 justify-content-between">
             <h5 class="mb-1" :class="getClassesText(fact.state)">
@@ -60,6 +62,8 @@ export default {
   name: 'Historical',
   data: function() {
     return {
+      filter: 99,
+      text: '',
       historical: [],
     }
   },
@@ -85,23 +89,61 @@ export default {
         case 1: return 'plus.svg';
         default: return 'star.svg';
       }
+    },
+    getHistorical: async function() {
+      // route es la ruta del server a la cual ir
+      const route = (this.filter == 99) ? '/gethistorical' : '/getcategoryhistorical';
+      // Se obtiene usuario del login
+      const user = this.$getter.getUser();
+      // Se crea objeto reconocible por el server
+      let  filter = '';
+
+      switch(parseInt(this.filter)) {
+        case 99: filter = ''; break;
+        case 0: filter = 'Compra'; break;
+        case 1: filter = 'Venta'; break;
+        case 2: filter = 'Alta'; break;
+        case 3: filter = 'Baja'; break;
+        case 4: filter = 'Modificacion'; break;
+      }
+
+      const historial = {
+        user: {
+          type: 'historical',
+          template: {
+            company: user.company,
+            filter: filter,
+            text: this.text
+          }
+        }
+      };
+
+      let response = await this.$requester.post(route, historial);
+      this.historical = response;
+    },
+    report: function(index) {
+      const historial = this.historical[index];
+      const content = [
+        historial.action,
+        'Clave: ' + historial.key,
+        'Empresa: ' + historial.company,
+        historial.time,
+        historial.details,
+        'Responsable: ' + historial.responsable
+      ];
+      this.$reports.writeFormatOff(historial.action + '.pdf', content);
+    }
+  },
+  watch: {
+    filter: async function() {
+      await this.getHistorical();
+    },
+    text: async function() {
+      await this.getHistorical();
     }
   },
   created: async function() {
-    // route es la ruta del server a la cual ir
-    const route = '/gethistorical';
-    // Se obtiene usuario del login
-    const user = this.$getter.getUser();
-    // Se crea objeto reconocible por el server
-    const historial = {
-      user: {
-        type: 'historical',
-        template: user
-      }
-    };
-
-    let response = await this.$requester.post(route, historial);
-    this.historical = response;
+    await this.getHistorical();
   }
 }
 </script>

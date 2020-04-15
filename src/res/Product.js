@@ -1,40 +1,53 @@
 class Product {
-  constructor(key, user) {
+  constructor(getter, oper) {
+    this.getter = getter;
+    this.oper = oper;
     this.product = {
-      key: key,
+      key: '',
       name: '',
       price: '',
       desc: '',
-      amount: '',
       ingredients: '',
-      company: user.company,
+      struct_ingredients: [],
+      company: '',
       category: '',
-      action: null,
-      responsable: user.company,
+      responsable:'',
       photo: 'http://localhost:8000/'
     };
   }
 
   build(event, ingredients) {
     const target = event.target;
+    this.product.key = (this.product.key != '') ?
+      this.product.key : this.getter.getRandomKey();
+    const user = this.getter.getUser();
+    this.product.company = user.company;
+    this.product.responsable = user.username;
     this.product.name = (target.name) ? target.name.value : '';
     this.product.price = (target.price) ? target.price.value : '';
     this.product.desc = (target.desc) ? target.desc.value : '';
-    this.product.amount = (target.amount) ? target.amount.value : '';
+    this.product.category = (target.category) ? target.category.value : '';
+    this.product.struct_ingredients = ingredients;
+    this.parseIngredients(ingredients);
+  }
 
+  parseIngredients(ingredients) {
     let ingredients_format = '';
-    console.log('FORMAT: ', ingredients);
     for(let i = 0; i < ingredients.length; i++)
       ingredients_format += ingredients[i].key + ',';
     this.product.ingredients = ingredients_format;
+  }
 
-    this.product.category = (target.category) ? target.category.value : '';
+  copy(product) {
+    this.product = product;
+    console.log(this.product);
   }
 
   serialize() {
     return {
       product: {
         type: 'product',
+        oper: this.oper,
         template: this.product
       }
     };

@@ -7,9 +7,9 @@
 
     <!-- Las SettingAlgo constan de un Template o Formulario y un List donde se muestran
       todos los de su categoria en este caso productos !-->
-    <TemplateProduct v-if="edit_product_menu" />
-    <ListMenu @edit="$emit('edit_mode', 'true')" :edit_page="true"
-      :delete_access="true" v-else />
+    <TemplateProduct v-if="edit_product_menu" :product="update_product" />
+    <ListMenu @edit="emit_edit" :edit_page="true"
+      :delete_access="true" @update="update" v-else />
   </div>
 </template>
 
@@ -20,14 +20,25 @@ import ListMenu from '@/components/menus/ListMenu.vue'
 export default {
   name: 'SettingProducts',
   data: function() {
-    return { }
+    return {
+      update_product: null,
+    }
   },
   props: ['edit_product_menu'],
   components: {
     TemplateProduct,
     ListMenu
   },
-  method: { }
+  methods: {
+    update: function(product) {
+      this.update_product = product;
+      this.$emit('edit_mode', true);
+    },
+    emit_edit: function() {
+      this.update_product = null;
+      this.$emit('edit_mode', 'true');
+    }
+  }
 }
 </script>
 

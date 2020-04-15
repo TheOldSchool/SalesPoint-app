@@ -13,22 +13,22 @@
                  @blur="outBlur($event, 'req_username')" required>
         </div>
         <div class="form-group col-md-6">
-          <label for="email_addr">
+          <label for="email">
             Correo electronico
             <span id="req_email" class="badge badge-danger"> Requerido*</span>
           </label>
-          <input type="email" name="email_addr" id="email_addr"
+          <input type="email" name="email" id="email"
                  class="form-control" placeholder="example@hotmail.com" 
                  v-model="email_addr" @blur="outBlur($event, 'req_email')"  required>
         </div>
         <div class="form-group col-md-6">
-          <label for="pass_word">
+          <label for="pass">
             Contraseña
             <span id="req_pass" class="badge badge-danger"> Requerido*</span>
             <span v-if="pass_error" class="badge badge-danger">Formato Incorrecto*</span>
           </label>
 
-          <input type="password" name="pass_word" id="pass_word"
+          <input type="password" name="pass" id="pass"
                  class="form-control" placeholder="********" v-model="pass_word" 
                  @blur="outBlur($event, 'req_pass')" @keyup="validate_pass" required>
           <small>Debe tener de 8-16 caracteres, al menos un dígito, una minúscula y mayúscula.</small>
@@ -121,6 +121,8 @@
 
 <script>
 import User from "@/res/User.js";
+import Validator from '@/res/Validator.js';
+
 export default {
   name: 'Register',
   data: function() {
@@ -141,44 +143,25 @@ export default {
       terms_error: true,
       pass_error: true,
       db_error: false,
-      error_msg: ''
+      error_msg: '',
+      validator: new Validator()
     }
   },
   methods: {
     send_user: async function(send_user) {
-      let route = 'adduser';
-      let data = {user: send_user};
-
-      let response = await this.$requester.post(route, data);
-      let json = await response.json();
-      this.validate_response(json);
+      let route = '/adduser';
+      console.log(send_user);
+      let response = await this.$requester.post(route, send_user.serialize());
+      this.validate_response(send_user.user, response);
     },
     build_user(event) {
-      let username = event.target.username.value;
-      let pass = event.target.pass_word.value;
-      let company = event.target.company.value;
-      let company_turn = event.target.regime.value;
-      let rfc = event.target.rfc.value;
-      let email = event.target.email_addr.value;
-      let address = event.target.address.value;
-      let colony = event.target.colony.value;
-      let postal_code = event.target.postal_code.value;
-      let cellphone = event.target.cellphone.value;
-
-      let user = new User(email, pass);
-      user.setUsername(username);
-      user.setCompany(company);
-      user.setCompanyTurn(company_turn);
-      user.setRFC(rfc);
-      user.setAddress(address);
-      user.setColony(colony);
-      user.setpostalCode(postal_code);
-      user.setCellphone(cellphone);
+      let user = new User();
+      user.build(event, this.company);
 
       if(!this.db_error){
         this.send_user(user);
-      }
-      else{
+      } else{
+        this.db_error = true;
         this.error_msg = 'Verificar los Campos.';
       }
 
@@ -193,62 +176,35 @@ export default {
         label.style.display = 'none';
     },
     validate_phone: function(){
-      if(this.cellphone.length == 10 && this.cellphone > 0)
-        this.db_error = false;
-      else {
-        this.error_msg = 'El numero celular debe tener 10 digitos y ser numeros positivos';
-        this.db_error = true;
-      }
+      this.setValidate(this.validator.validPhone(this.cellphone));
     },
     validate_terms: function (){
-      if(this.terms)
-        this.db_error = false;
-      else {
-          this.error_msg = 'Debe aceptar los terminos y condiciones de uso.';
-          this.db_error = true;
-      }
+      this.setValidate(this.validator.validTerms(this.terms));
     },
     validate_rfc: function (){
       var cod = document.getElementById("regime").value;
       var comp = cod.localeCompare('p_physical');
-
-      if(comp == 0){
-        const re1 = /^([A-ZÑ&]{4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/;
-
-        if(this.rfc.match(re1))
-          this.db_error = false;
-        else{
-          this.error_msg = 'El RFC debe cumplir con las condiciones establecidas dependiendo de la Persona Fisica (ABCD123456XXX).';
-          this.db_error = true;
-        }
-      } else{
-        const re2 = /^([A-ZÑ&]{3}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/;
-
-        if(this.rfc.match(re2))
-          this.rfc_error=false;
-        else{
-          this.error_msg = 'El RFC debe cumplir con las condiciones establecidas dependiendo de la Persona Moral (ABC123456XXX).';
-          this.db_error = true;
-        }
-      }
+      const res = this.validator.validRFC(this.rfc, comp);
+      this.setValidate(res);
     },
     validate_pass: function (){
-      const re3 = /^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/;
-
-      if(this.pass_word.match(re3))
-        this.db_error =false;
-      else{
-        this.error_msg = 'La contraseña debe cumplir los requisitos del sistema. (ver en Ayuda)';
-        this.db_error = true;
-      }
+      this.setValidate(this.validator.validPass(this.pass_word));
     },
-    validate_response: function(acuse) {
-      if(acuse.body.stats === 200) {
-        this.$router.push({name: 'market'});
+    validate_response: function(user, acuse) {
+      if(acuse.length == 0) {
+        sessionStorage.setItem('user', JSON.stringify(user));
+        this.$router.push('/market');
       } else {
         this.db_error = true;
-        this.error_msg = 'Ya existe un usuario con la misma empresa';
+        this.error_msg = 'Ya existe un usuario con la misma empresa y/o correo electrónico';
       }
+    },
+    setValidate: function(response) {
+      if(response.length > 0) {
+        this.db_error = true;
+        this.error_msg = response;
+      } else
+        this.db_error = false;
     }
   }
 }

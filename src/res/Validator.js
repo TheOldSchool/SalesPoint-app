@@ -1,23 +1,45 @@
 class Validator {
-  constructor() {
+  constructor() { }
 
+  validRFC(rfc, type) {
+    if(type == 0){
+      const re1 = /^([A-ZÑ&]{4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/;
+
+      if(rfc.match(re1))
+        return '';
+      else
+        return 'El RFC debe cumplir con las condiciones establecidas dependiendo de la Persona Fisica (ABCD123456XXX).';
+    } else{
+      const re2 = /^([A-ZÑ&]{3}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/;
+
+      if(rfc.match(re2))
+        return '';
+      else
+        return 'El RFC debe cumplir con las condiciones establecidas dependiendo de la Persona Moral (ABC123456XXX).';
+    }
   }
 
-  sessionRequest(user) {
-    let validEmail = !(this.isempty(user.email) || this.sqlInjection(user.email));
-    let validPass = !(this.isempty(user.password) || this.sqlInjection(user.password));
-    return validEmail && validPass;
+  validPhone(cellphone) {
+    if(cellphone.length == 10)
+      return '';
+    else
+      return 'El numero celular debe tener 10 digitos y ser numeros positivos';
   }
 
-  isempty(field) {
-    return field == '' || field === undefined || field.length == 0;
+  validTerms(terms) {
+    if(terms)
+      return '';
+    else
+      return 'Debe aceptar los terminos y condiciones de uso.';
   }
 
-  sqlInjection(field) {
-    let injection = field.indexOf('\'') != -1 && field.indexOf('"') != -1;
-    if(injection)
-      field.replace("'", "'").replace('"', '"');
-    return false;
+  validPass(pass_word) {
+    const re3 = /^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/;
+
+    if(pass_word.match(re3))
+      return '';
+    else
+      return 'La contraseña debe cumplir los requisitos del sistema.';
   }
 }
 

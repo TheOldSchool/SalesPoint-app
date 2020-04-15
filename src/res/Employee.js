@@ -23,6 +23,10 @@ class Employee {
     this.employee.cellphone = (target.cellphone) ? target.cellphone.value : '';
   }
 
+  copy(employee) {
+    this.employee = employee;
+  }
+
   serialize() {
     return {
       employee: {

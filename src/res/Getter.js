@@ -1,10 +1,11 @@
 class Getter {
   constructor() { }
 
-  static getUser() {
+  getUser() {
     const thereLocal = localStorage.getItem('user');
     const thereSession = sessionStorage.getItem('user');
     let user = null;
+
 
     if(thereLocal == undefined && thereSession == undefined)
       user = null;
@@ -14,7 +15,21 @@ class Getter {
     return user;
   }
 
-  static getRandomKey() {
+  setUser(user) {
+    const thereLocal = localStorage.getItem('user');
+    const thereSession = sessionStorage.getItem('user');
+
+    if(thereLocal == undefined && thereSession == undefined)
+      user = null;
+    else if(JSON.parse((thereLocal != undefined)))
+      localStorage.setItem('user', JSON.stringify(user));
+    else
+      sessionStorage.setItem('user', JSON.stringify(user));
+
+    return user;
+  }
+
+  getRandomKey() {
     let mask = 'abcdefghijklmnopqrstuvwxyz';
     mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     mask += '0123456789';

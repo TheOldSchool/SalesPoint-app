@@ -11,12 +11,16 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 
 import Getter from './res/Getter.js'
 import Requester from './res/Requester.js';
+import Historical from './res/Historical.js';
+import Reports from './res/Reports.js';
 
 Vue.config.productionTip = false;
 Vue.use(Vuex);
 
-Vue.prototype.$getter = Getter
+Vue.prototype.$getter = new Getter()
 Vue.prototype.$requester = new Requester()
+Vue.prototype.$historical = new Historical()
+Vue.prototype.$reports = new Reports()
 
 new Vue({
   store,

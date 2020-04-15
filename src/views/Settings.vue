@@ -27,7 +27,14 @@
       <SettingInventory @change_window="change_window" @edit_mode="edit_mode"
         :edit_menu="list" v-else-if="type == 'inventory'" />
 
+      <Shopping @change_window="change_window" @edit_mode="edit_mode"
+        :edit_menu="list" v-else-if="type == 'shopping'" />
+
       <Historical v-else-if="type == 'historical'" />
+
+      <Profile v-else-if="type == 'profile'" />
+
+      <Backup v-else-if="type == 'backup'" />
     </div>
   </div>
 </template>
@@ -38,7 +45,10 @@ import SettingProducts from "@/components/products/SettingProducts.vue";
 import SettingEmployee from "@/components/employees/SettingEmployee.vue";
 import SettingProviders from "@/components/providers/SettingProviders.vue";
 import SettingInventory from '@/components/inventory/SettingInventory.vue';
+import Shopping from '@/components/Shopping.vue';
 import Historical from "@/components/Historical.vue";
+import Profile from '@/components/Profile.vue';
+import Backup from '@/components/Backup.vue';
 
 export default {
   name: "Settings",
@@ -52,7 +62,6 @@ export default {
     change_window: function(window) {
       this.type = window;
       this.list = false;
-      console.log(this.type + ' ' + this.list);
     },
     edit_mode: function(mode) {
       this.list = mode;
@@ -64,7 +73,10 @@ export default {
       SettingEmployee,
       SettingProviders,
       SettingInventory,
-      Historical
+      Shopping,
+      Historical,
+      Profile,
+      Backup
   }
 };
 </script>
