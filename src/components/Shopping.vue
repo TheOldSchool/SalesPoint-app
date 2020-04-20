@@ -23,14 +23,50 @@
       </div>
 
       <div class="form-row">
+
         <div class="form-group col-md-6">
           <label for="provider">Proveedor</label>
           <select id="provider" name="provider" v-model="shop.provider" class="form-control">
             <option v-for="(provider, index) in providers" v-bind:key="provider.id"
               :value="index">{{provider.name}}</option>
-            <option value="-1">Otro...</option>
+            <option value="-1">Eligir...</option>
           </select>
+
+          <div class="ingredient bg-danger text-light"
+          v-for="(ingredient, index) in selected_ingredients" v-bind:key="index">
+          {{ingredient.name}}
+
+          <span class="badge badge-dark-danger">{{ingredient.amount}}</span>
+          <span class="badge badge-danger" @click="selected_ingredients.splice(index, 1)">x</span>
         </div>
+
+        </div>
+
+        <div class="col-md-3">
+          <label for="ingredients_product">Ingredientes</label>
+
+          <select id="ingredients_product" class="form-control" name="ingredients_product" required>
+            <option selected>Choose...</option>
+            <option v-for="(ingredient, index) in ingredients" v-bind:key="index"
+              :value="index">
+              {{ingredient.name}}
+            </option>
+          </select>
+
+        </div>
+
+        <div class="col-md-3">
+          <label for="amounts">Cantidad</label>
+          <input id="amounts" class="form-control" type="number" name="amounts"
+            placeholder="6" >
+
+          <button type="button" class="btn btn-block btn-success mt-3" @click="add_ingredient()">
+            Agregar
+          </button>
+        </div>
+      </div>
+
+      <div class="form-row">
         <div class="form-group col-md-6">
           <label for="status">Estado de pago</label>
           <select id="status" name="status" class="form-control" v-model="shop.status">
@@ -110,6 +146,9 @@ export default {
       alert_show: false,
       message_alert: '',
       providers: [],
+      ingredients: [],
+      selected_ingredients: [],
+      shop_ingredients: '',
       shop: new Shop(this.$getter.getRandomKey()),
     }
   },
@@ -125,7 +164,10 @@ export default {
       this.shop.company = this.$getter.getUser().company;
       this.shop.provider = this.providers[this.shop.provider].name;
 
-      const response = await this.$requester.post(route_shop, this.shop.serialize());
+      const shop_bundle = this.shop.serialize();
+      shop_bundle.ingredients = [{ ingredients: this.shop_ingredients }];
+
+      const response = await this.$requester.post(route_shop, shop_bundle);
 
       const historical = this.$historical.renderHistorical(this.shop.serialize().shop);
       const response_htl = await this.make_request(route, historical);
@@ -141,12 +183,45 @@ export default {
         this.alert_show = true;
         this.message_alert = 'Los datos se han agregado exitosamente';
         this.shop = new Shop(this.$getter.getRandomKey());
+        this.selected_ingredients = [];
+        this.shop_ingredients = '';
+        document.getElementById('amounts').value = '';
       } else {
         this.okay = false;
         this.alert_show = true;
         this.message_alert = 'Esto es penoso, por alguna razón no se pudo agregar a este empleado. Intentalo más tarde.';
       }
     },
+    getIngredients: async function() {
+      const route = '/getinventory';
+      const params = {
+        inventory: {
+          type: 'inventory',
+          template: { company: this.$getter.getUser().company }
+        }
+      };
+
+      this.ingredients = await this.make_request(route, params);
+    },
+    add_ingredient: function() {
+      const index = document.getElementById('ingredients_product').value;
+      const ingredient = this.ingredients[index].name;
+      const key = this.ingredients[index].key;
+      const amounts = document.getElementById('amounts').value;
+      // name el nombre del ingrediente (se muestra en pantall)
+      // amount la cantidad del ingrediente (se muestra en pantalla)
+      // key la clave del ingrediente (no se muestra en pantalla)
+      const result = {
+        name: ingredient,
+        amount: amounts,
+        key: key + 'x' + amounts
+      };
+
+      this.shop_ingredients += key + 'x' + (-1 * amounts) + ',';
+      this.selected_ingredients.push(result);
+    },
+
+
   },
   watch: {
     'shop.price': function() {
@@ -168,6 +243,7 @@ export default {
       }
     };
     this.providers = await this.make_request(route, params);
+    this.getIngredients();
   }
 }
 </script>
@@ -197,6 +273,20 @@ small {
   margin-left: 50%;
   left: -28%;
   margin-bottom: 50px;
+}
+
+.ingredient {
+  display: inline-block;
+  margin: 8px 6px 10px 6px;
+  padding: 4px 6px;
+  border-radius: 5px;
+} .ingredient .badge {
+  cursor: pointer;
+}
+
+.badge-dark-danger {
+  color: white;
+  background-color: #AD2A37;
 }
 
 </style>

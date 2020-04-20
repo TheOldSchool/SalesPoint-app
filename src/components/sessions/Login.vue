@@ -53,6 +53,7 @@ export default {
       const serialize_user = user.serialize();
 
       const response = await this.$requester.post(route, serialize_user);
+      console.log(response);
       this.validate_response(response);
     },
     validate_response: function(response) {
