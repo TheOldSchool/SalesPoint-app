@@ -10,7 +10,7 @@
           </label>
           <input type="text" name="username" id="username"
                  class="form-control" placeholder="Alberto Ramirez Valenzuela" v-model="username"
-                 @blur="outBlur($event, 'req_username')" required>
+                 @blur="outBlur($event, 'req_username')" @keyup="validator.onlyLetter($event)" required>
         </div>
         <div class="form-group col-md-6">
           <label for="email">

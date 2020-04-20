@@ -49,11 +49,10 @@
         <div class="form-group col-md-6">
           <div class="row">
 
-          <div class="col-sm-6">
+          <div class="col-sm-4">
             <label for="ingredients_product">Ingredientes</label>
 
-            <select id="ingredients_product" class="form-control" name="ingredients_product" required>
-              <option selected>Choose...</option>
+            <select id="ingredients_product" class="form-control" name="ingredients_product" v-model="ingredient_index" required>
               <option v-for="(ingredient, index) in ingredients" v-bind:key="index"
                 :value="index">
                 {{ingredient.name}}
@@ -62,19 +61,27 @@
 
           </div>
 
-          <div class="col-sm-6">
+          <div class="col-sm-4">
             <label for="amounts">Cantidad</label>
             <input id="amounts" class="form-control" type="number" name="amounts"
-              placeholder="6" >
+              min="0" placeholder="6" >
           </div>
-          <div class="container">
-            <button type="button" class="btn btn-block btn-success mt-3" @click="add_ingredient()">
-              Agregar
-            </button>
+
+          <div class="col-sm-4">
+            <label for="type_amount">Tipo de unidad</label>
+            <select id="type_amount" name="type_amount" class="form-control"
+              v-model="getUnits" disabled required>
+              <option value="0">Unidades</option>
+              <option value="1">Kg.</option>
+              <option value="2">Ltrs</option>
+            </select>
           </div>
-        </div>
+          <button type="button" class="btn btn-block btn-success mt-3" @click="add_ingredient()">
+            Agregar
+          </button>
         </div>
       </div>
+    </div>
 
       <div class="form-row">
         <div class="form-group col">
@@ -98,10 +105,8 @@
         </div>
       </div>
 
-      <button type="submit" id="add-product"
-        class="btn btn-primary mt-2">
-          Agregar Producto
-      </button>
+      <input type="submit" id="add-product"
+        class="btn btn-primary mt-2" :value="(product != null) ? 'Guardar' : 'Agregar'">
     </form>
 
     <div class="alert" :class="{ 'alert-primary': okay, 'alert-danger': !okay }" role="alert" 
@@ -135,6 +140,7 @@ export default {
       // Cambia el texto del mensaje
       message_alert: '',
       ingredients: [],
+      ingredient_index: 0,
       selected_ingredients: [],
       validator: new Validator()
     }
@@ -225,13 +231,21 @@ export default {
       // name el nombre del ingrediente (se muestra en pantall)
       // amount la cantidad del ingrediente (se muestra en pantalla)
       // key la clave del ingrediente (no se muestra en pantalla)
-      const result = {
-        name: ingredient,
-        amount: amounts,
-        key: key + 'x' + amounts
-      };
+      if(amounts <= 0) {
+        this.okay = false;
+        this.alert_show = true;
+        this.message_alert = 'Las cantidades en los ingredientes debe ser mayor a 0.';
+      } else {
+        this.alert_show = false;
+        const result = {
+          name: ingredient,
+          amount: amounts,
+          key: key + 'x' + amounts
+        };
 
-      this.selected_ingredients.push(result);
+        this.selected_ingredients.push(result);
+        document.getElementById('amounts').value = '';
+      }
     },
     // Cada alta se resetean los campos
     clean: function() {
@@ -260,7 +274,6 @@ export default {
           const ingrxamount = product_ingredients[i].split('x');
 
           for(let j = 0; j < this.ingredients.length; j++) {
-
             if(this.ingredients[j].key == ingrxamount[0]) {
               const result = {
                 name: this.ingredients[j].name,
@@ -274,6 +287,12 @@ export default {
 
         }
       }
+    }
+  },
+  computed: {
+    getUnits: function() {
+      const ingredient = this.ingredients[this.ingredient_index];
+      return (ingredient == undefined) ? 0 : ingredient.units;
     }
   },
   created: async function() {

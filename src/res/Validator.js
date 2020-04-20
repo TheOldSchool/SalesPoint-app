@@ -20,7 +20,8 @@ class Validator {
   }
 
   validPhone(cellphone) {
-    if(cellphone.length == 10)
+    cellphone = cellphone + '';
+    if(cellphone.length == 10 && parseInt(cellphone) > 0)
       return '';
     else
       return 'El numero celular debe tener 10 digitos y ser numeros positivos';
@@ -51,6 +52,21 @@ class Validator {
 
   isEmpty(struct) {
     return (struct.length == 0) ? 'Uno o varios de los campos obligatorios esta vacio.' : '';
+  }
+
+  onlyLetter(e) {
+    console.log(e.target.value);
+    var text = e.target.value;
+    let okay = true;
+    var letras = "@";
+
+    letras.split('').forEach(element => {
+      if(text.indexOf(element) != -1) {
+        okay = false;
+      }
+    });
+    console.log(okay);
+    return okay;
   }
 }
 

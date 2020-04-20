@@ -58,7 +58,7 @@ export default {
     },
     getCompany: function() {
       let user = this.$getter.getUser();
-      return (user != undefined) ? user.company : 'SalesPoint v1 2020';
+      return (user != undefined) ? user.company : 'SalesPoint 2020 1.0.0v';
     }
   },
   components: {

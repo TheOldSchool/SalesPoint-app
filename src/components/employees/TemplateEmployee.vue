@@ -58,13 +58,11 @@
       <div class="form-row">
         <div class="form-group col">
           <label for="cellphone">Número celular</label>
-          <input id="cellphone" type="text" name="cellphone" class="form-control" placeholder="6442340198" required>
+          <input id="cellphone" type="number" name="cellphone" class="form-control" placeholder="6442340198" required>
         </div>
       </div>
 
-      <button class="btn btn-block btn-primary" type="submit" id="add-employee">
-        Agregar Empleado
-      </button>
+      <input class="btn btn-block btn-primary" type="submit" id="add-employee" :value="(employee != null) ? 'Guardar' : 'Agregar'">
 
       <div class="alert" :class="{ 'alert-primary': okay, 'alert-danger': !okay }" role="alert" 
         v-show="alert_show" @click="alert_show = false">

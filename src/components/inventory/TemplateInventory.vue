@@ -6,24 +6,33 @@
       <div class="form-group">
         <div class="form-row">
 
-          <div class="col">
+          <div class="col-md-4">
             <label for="name">Nombre</label>
             <input type="text" class="form-control" id="name" name="name"
               placeholder="Tomates" required>
+            <button type="submit" class="btn btn-primary btn-block mb-2 mt-3">
+              Agregar
+            </button>
           </div>
 
-          <div class="col">
+          <div class="col-md-4">
             <label for="amount">Cantidad</label>
             <input type="number" class="form-control" id="amount" name="amount"
-              placeholder="6" required>
+              placeholder="6" min="0" required>
+          </div>
+
+          <div class="col-md-4">
+            <label for="type_amount">Tipo de unidad</label>
+            <select id="type_amount" class="form-control" name="type_amount" required>
+              <option value="0">Unidades</option>
+              <option value="1">Kg.</option>
+              <option value="2">Ltrs.</option>
+            </select>
           </div>
 
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary mb-2">
-        Agregar
-      </button>
     </form>
   </div>
 </template>
@@ -46,7 +55,8 @@ export default {
             company: user.company,
             ingredient: key,
             amount: event.target.amount.value,
-            name: event.target.name.value
+            name: event.target.name.value,
+            unit: event.target.type_amount.value
           }
         }
       };

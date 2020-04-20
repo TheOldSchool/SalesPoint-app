@@ -31,7 +31,7 @@
       <tbody>
         <tr v-for="ingredient in list_ingredients" v-bind:key="ingredient.key">
           <td>{{ingredient.name}}</td>
-          <td>{{ingredient.amount}}</td>
+          <td>{{ingredient.amount}} {{getUnit(ingredient)}}</td>
           <td>
             <div class="row">
               <div class="col">
@@ -158,6 +158,14 @@ export default {
       inventory.push(content);
 
       this.$reports.write('reporte_inventario.pdf', inventory);
+    },
+    getUnit: function(ingredient) {
+      switch(ingredient.units) {
+        case 2: return 'Ltrs.';
+        case 1: return 'Kg.';
+        case 0:
+        default: return 'Unidades';
+      }
     }
   },
   created: async function() {

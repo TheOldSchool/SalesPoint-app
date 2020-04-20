@@ -41,28 +41,41 @@
         </div>
 
         </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-4">
+              <label for="ingredients_product">Ingredientes</label>
 
-        <div class="col-md-3">
-          <label for="ingredients_product">Ingredientes</label>
+              <select id="ingredients_product" class="form-control" name="ingredients_product"
+                v-model="ingredient_index" required>
+                <option v-for="(ingredient, index) in ingredients" v-bind:key="index"
+                  :value="index">
+                  {{ingredient.name}}
+                </option>
+              </select>
 
-          <select id="ingredients_product" class="form-control" name="ingredients_product" required>
-            <option selected>Choose...</option>
-            <option v-for="(ingredient, index) in ingredients" v-bind:key="index"
-              :value="index">
-              {{ingredient.name}}
-            </option>
-          </select>
+            </div>
 
-        </div>
+            <div class="col-md-4">
+              <label for="amounts">Cantidad</label>
+              <input id="amounts" class="form-control" type="number" name="amounts"
+                placeholder="6" >
+            </div>
 
-        <div class="col-md-3">
-          <label for="amounts">Cantidad</label>
-          <input id="amounts" class="form-control" type="number" name="amounts"
-            placeholder="6" >
+            <div class="col-sm-4">
+              <label for="type_amount">Tipo de unidad</label>
+              <select id="type_amount" name="type_amount" class="form-control"
+                v-model="getUnits" disabled required>
+                <option value="0">Unidades</option>
+                <option value="1">Kg.</option>
+                <option value="2">Ltrs</option>
+              </select>
+            </div>
 
-          <button type="button" class="btn btn-block btn-success mt-3" @click="add_ingredient()">
-            Agregar
-          </button>
+            <button type="button" class="btn btn-block btn-success mt-3" @click="add_ingredient()">
+              Agregar
+            </button>
+          </div>
         </div>
       </div>
 
@@ -147,6 +160,7 @@ export default {
       message_alert: '',
       providers: [],
       ingredients: [],
+      ingredient_index: 0,
       selected_ingredients: [],
       shop_ingredients: '',
       shop: new Shop(this.$getter.getRandomKey()),
@@ -211,14 +225,22 @@ export default {
       // name el nombre del ingrediente (se muestra en pantall)
       // amount la cantidad del ingrediente (se muestra en pantalla)
       // key la clave del ingrediente (no se muestra en pantalla)
-      const result = {
-        name: ingredient,
-        amount: amounts,
-        key: key + 'x' + amounts
-      };
 
-      this.shop_ingredients += key + 'x' + (-1 * amounts) + ',';
-      this.selected_ingredients.push(result);
+      if(amounts > 0) {
+        this.alert_show = false;
+        const result = {
+          name: ingredient,
+          amount: amounts,
+          key: key + 'x' + amounts
+        };
+
+        this.shop_ingredients += key + 'x' + (-1 * amounts) + ',';
+        this.selected_ingredients.push(result);
+      } else {
+        this.okay = false;
+        this.alert_show = true;
+        this.message_alert = 'La cantidad en los ingredientes debe ser mayor a 0.';
+      }
     },
 
 
@@ -234,6 +256,13 @@ export default {
       }
     }
   },
+  computed: {
+    getUnits: function() {
+      const ingredient = this.ingredients[this.ingredient_index];
+      return (ingredient == undefined) ? 0 : ingredient.units;
+    }
+  },
+
   created: async function() {
     const route = '/getallproviders';
     const params = {

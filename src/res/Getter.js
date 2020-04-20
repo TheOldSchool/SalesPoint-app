@@ -30,8 +30,8 @@ class Getter {
   }
 
   getRandomKey() {
-    let mask = 'abcdefghijklmnopqrstuvwxyz';
-    mask += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let mask = 'abcdefghijklmnopqrstuvwyz';
+    mask += 'ABCDEFGHIJKLMNOPQRSTUVWYZ';
     mask += '0123456789';
     let generated_key = '';
 

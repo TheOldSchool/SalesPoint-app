@@ -57,11 +57,6 @@
       <div class="form-group">
         <div class="row">
           <div class="col-md-6">
-            <label for="rfc">RFC</label>
-            <input class="form-control" type="text" id="rfc" name="rfc"
-              placeholder="VECJ880326XXX" required>
-          </div>
-          <div class="col-md-6">
             <label for="regime">Régimen Fiscal</label>
             <select name="regime" id="regime" class="form-control" v-if="provider == undefined" required>
             <option value="p_physical">Persona Fisica</option>
@@ -71,16 +66,21 @@
             <select name="regime" id="regime" class="form-control" disabled v-else>
             </select>
           </div>
+          <div class="col-md-6">
+            <label for="rfc">RFC</label>
+            <input class="form-control" type="text" id="rfc" name="rfc"
+              placeholder="VECJ880326XXX" required>
+          </div>
         </div>
       </div>
 
       <div class="form-group">
         <label for="codepostal">Código Postal</label>
         <input class="form-control" type="number" id="codepostal" name="codepostal"
-          placeholder="85219" required>
+          min="0" placeholder="85219" required>
       </div>
 
-      <input class="btn btn-block btn-primary" type="submit" value="Agregar">
+      <input class="btn btn-block btn-primary" type="submit" :value="(provider != null) ? 'Guardar' : 'Agregar'">
 
       <div class="alert" :class="{ 'alert-primary': okay, 'alert-danger': !okay }" role="alert"
         v-show="alert_show" @click="alert_show = false">

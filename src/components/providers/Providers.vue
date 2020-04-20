@@ -5,7 +5,7 @@
 
       <!-- Se genera cuadro de provider con info de provider !-->
       <div class="col-lg-12 text-center">
-        <img id="icon" :src="require(`@/assets/${img}`)" alt="icon" width="80%" 
+        <img id="icon" :src="require(`@/assets/${img}`)" alt="icon" width="80%" height="155px"
           v-if="edit_access" >
         <img id="icon" :src="provider.photo" alt="icon" width="100%" height="150px"
           v-else >

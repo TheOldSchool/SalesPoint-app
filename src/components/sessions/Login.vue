@@ -10,7 +10,7 @@
       <div class="form-group">
         <label for="pass_word">Contraseña</label>
         <input type="password" class="form-control" name="pass" id="pass"
-               placeholder="********" maxlength="18" required>
+               placeholder="********" maxlength="18" required >
         <small id="pass-word-alert" class="form-text text-muted">
           Los espacios también son tomados en cuenta.
         </small>
