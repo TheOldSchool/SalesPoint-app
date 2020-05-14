@@ -1,5 +1,5 @@
 <template>
-  <div class="container" id="menusett">
+  <div class="" id="menusett">
     <!-- Menu de configuraciones !-->
     <h6 class="text-info">Configuración</h6>
     <ul class="list-group list-group-flush">

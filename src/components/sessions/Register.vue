@@ -10,7 +10,7 @@
           </label>
           <input type="text" name="username" id="username"
                  class="form-control" placeholder="Alberto Ramirez Valenzuela" v-model="username"
-                 @blur="outBlur($event, 'req_username')" @keyup="validator.onlyLetter($event)" required>
+                 @blur="outBlur($event, 'req_username')" @keyup="validateOnlyLetters($event)" required>
         </div>
         <div class="form-group col-md-6">
           <label for="email">
@@ -188,6 +188,16 @@ export default {
     },
     validate_pass: function (){
       this.setValidate(this.validator.validPass(this.pass_word));
+    },
+    validateOnlyLetters: function(event) {
+      const isvalid = this.validator.onlyLetters(event);
+      const text = event.target.value;
+
+      if(!isvalid) {
+        event.target.value = text.substring(0, text.length-1);
+        this.setValidate('Este campo solo acepta caracteres alfanúmericos.');
+      } else
+        this.setValidate('');
     },
     validate_response: function(user, acuse) {
       if(acuse.length == 0) {

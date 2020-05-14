@@ -13,7 +13,6 @@ class Reports {
   }
 
   header() {
-    this.doc = new jsPDF();
     this.doc.setFont("helvetica");
     this.doc.addImage(this.logobase64, 'PNG', 10, 10, 15, 15, '', 'NONE', 0);
     this.doc.setFontType('bold');
@@ -50,6 +49,67 @@ class Reports {
     this.doc.text(content[4], 30, 115);
     this.doc.text(content[5], 30, 100);
     this.doc.save(name);
+  }
+
+  writeFormatOffPages(name, content, time, type) {
+    this.createDoc();
+    let total = 0;
+
+    switch(parseInt(type)) {
+      case 0:
+      case 1:
+        total = this.makeTotalsPage(content);
+        this.setPriceHeader(total, content[0], time, type);
+        break;
+    }
+
+    for(let i = 0; i < content.length; i++) {
+      this.header();
+      this.doc.setFontType('bold');
+      this.doc.text('REPORTE DE ' + ((parseInt(type) == 0) ? 'COMPRAS' : 'VENTAS'), 30, 60);
+      this.doc.setFontType('normal');
+      this.doc.text('Responsable: ' + content[i].responsable, 30, 70);
+      this.doc.text('Estado: ' + ((content[i].state == 0) ? 'Completado' : 'Parcial'), 30, 75);
+      this.doc.text('Fecha: ' + content[i].time, 30, 80);
+      this.doc.text(content[i].details, 30, 85);
+      this.doc.addPage();
+    }
+
+    this.doc.save(name);
+  }
+
+  makeTotalsPage(content) {
+    let total = 0;
+
+    for(let i = 0; i < content.length; i++) {
+      let sections = content[i].details.split('\n');
+      let index = 0;
+
+      for(let j = 0; j < sections.length; j++) {
+        if(sections[j].indexOf('Total') != -1) {
+          index = j;
+          break;
+        }
+      }
+
+      const numerical = sections[index].replace('Total: ', '');
+      total += parseFloat(numerical);
+    }
+
+    return total;
+  }
+
+  setPriceHeader(total, content, time, type) {
+    const operations = (parseInt(type) == 0) ? 'compras' : 'ventas';
+    let header = 'Reporte detallado de ' + operations + ' desde la fecha ' +
+      ((time[0] == null || time[0] == '') ? 'de inicio ' : time[0]) + ' a la fecha ' +
+      ((time[1] == null || time[1] == '') ? 'actual' : time[1]) + ' de la empresa ' +
+      content.company + '.';
+
+    this.doc.setFontSize(10);
+    this.doc.text(header, 30, 40);
+    this.doc.setFontType('bold');
+    this.doc.text('Total: $' + total, 30, 45);
   }
 }
 

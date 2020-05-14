@@ -54,19 +54,35 @@ class Validator {
     return (struct.length == 0) ? 'Uno o varios de los campos obligatorios esta vacio.' : '';
   }
 
-  onlyLetter(e) {
-    console.log(e.target.value);
+  onlyLetters(e){
+    var onlyletter = true;
     var text = e.target.value;
-    let okay = true;
-    var letras = "@";
+    var letras = "@`~!#$%^&*()<>?/-_+={}[];:'|";
 
     letras.split('').forEach(element => {
-      if(text.indexOf(element) != -1) {
-        okay = false;
-      }
+      if(text.indexOf(element) != -1)
+        onlyletter = false;
     });
-    console.log(okay);
-    return okay;
+
+    return onlyletter;
+  }
+
+  correctForm(id_label){
+      const label = document.getElementById(id_label);
+      if (this.type_error){
+        label.style.display = 'inline-block';
+      }
+      else{
+        label.style.display = 'none';
+      }
+  }
+
+  validDate(date) {
+    const regDate = /^\d{4}[/](0?[1-9]|1[012])[/](0?[1-9]|[12][0-9]|3[01])$/
+    if(date.match(regDate))
+      return true;
+    else
+      return false;
   }
 }
 

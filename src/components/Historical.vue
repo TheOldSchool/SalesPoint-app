@@ -25,6 +25,25 @@
           </select>
         </div>
       </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <label for="date_start">Fecha inicio: </label>
+          <input id="date_start" type="text" name="date_start" class="form-control"
+            placeholder="aaaa/mm/dd" v-model="dateStart" @keyup="getHistorical()">
+        </div>
+        <div class="col-md-6">
+          <label for="date_end">Fecha final:</label>
+          <input id="date_end" type="text" name="date_end" class="form-control"
+            placeholder="aaaa/mm/dd" v-model="dateEnd" @keyup="getHistorical()">
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+        </div>
+        <div class="col-md-6">
+          <button class="btn btn-success btn-block" @click="multiReport()">Generar Reporte</button>
+        </div>
+      </div>
     </div>
 
     <div class="container" id="empty-stack" v-if="historical.length == 0">
@@ -33,6 +52,9 @@
           alt="empty" width="100px">
         No se han registrado acciones.
       </span>
+      <div class="alert alert-danger" role="alert" v-show="show_alert">
+        El formato en la fecha no es valido. Formato: aaaa/mm/dd (2020/05/03)
+      </div>
     </div>
 
     <div class="container" id="historical-stack" v-else>
@@ -53,18 +75,27 @@
 
         </a>
       </div>
+      <div class="alert alert-danger" role="alert" v-show="show_alert">
+        El formato en la fecha no es valido. Formato: aaaa/mm/dd (2020/05/03)
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Validator from '@/res/Validator.js';
+
 export default {
   name: 'Historical',
   data: function() {
     return {
       filter: 99,
       text: '',
+      dateStart: null,
+      dateEnd: null,
       historical: [],
+      show_alert: false,
+      validator: new Validator()
     }
   },
   methods: {
@@ -97,6 +128,17 @@ export default {
       const user = this.$getter.getUser();
       // Se crea objeto reconocible por el server
       let  filter = '';
+      const dateStart = (this.dateStart != null) ? this.dateStart : '';
+      const dateEnd = (this.dateEnd != null) ? this.dateEnd : '';
+
+      if(!this.validator.validDate(dateStart) || !this.validator.validDate(dateEnd)) {
+        if(this.dateStart != null || this.dateEnd != null) {
+          this.show_alert = true;
+          console.log('Show', this.show_alert);
+          }
+      } else {
+        this.show_alert = false;
+      }
 
       switch(parseInt(this.filter)) {
         case 99: filter = ''; break;
@@ -113,7 +155,9 @@ export default {
           template: {
             company: user.company,
             filter: filter,
-            text: this.text
+            text: this.text,
+            start: dateStart.replace(/[/]/g, '-'),
+            end: dateEnd.replace(/[/]/g, '-'),
           }
         }
       };
@@ -132,6 +176,21 @@ export default {
         'Responsable: ' + historial.responsable
       ];
       this.$reports.writeFormatOff(historial.action + '.pdf', content);
+    },
+    multiReport: function() {
+      if(this.historical.length > 0) {
+        let name = 'historial';
+        switch(parseInt(this.filter)) {
+          case 0: name += '_compras.pdf'; break;
+          case 1: name += '_ventas.pdf'; break;
+          case 2: name += '_altas.pdf'; break;
+          case 3: name += '_bajas.pdf'; break;
+          case 4: name += '_modificaciones.pdf'; break;
+        }
+
+        const times = [this.dateStart, this.dateEnd];
+        this.$reports.writeFormatOffPages(name, this.historical, times, this.filter);
+      }
     }
   },
   watch: {
@@ -168,5 +227,14 @@ export default {
 
 .successText {
   color: #1F8035;
+}
+
+.alert {
+  position: fixed;
+  bottom: 0;
+  width: 60%;
+  margin-bottom: 50px;
+  left: 50%;
+  margin-left: -25%;
 }
 </style>
