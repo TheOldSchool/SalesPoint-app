@@ -55,6 +55,11 @@ export const store =  new Vuex.Store({
         state.index = 0;
 
       state.cars.splice(i, 1);
+    },
+    cleanCar: function(state) {
+      state.order = new Order();
+      state.cars = [new Car()];
+      console.log('Entro');
     }
   },
   actions: {
@@ -78,6 +83,9 @@ export const store =  new Vuex.Store({
     },
     removeCar_action: function({commit}, index) {
       commit('removeCar', index);
+    },
+    cleanCar_action: function({commit}) {
+      commit('cleanCar');
     }
   },
   getters: {

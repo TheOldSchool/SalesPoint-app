@@ -96,6 +96,7 @@ export default {
     exit: function() {
       sessionStorage.removeItem('user');
       localStorage.removeItem('user');
+      this.$store.dispatch('cleanCar_action');
       this.$router.push('/');
     }
   },

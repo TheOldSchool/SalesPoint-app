@@ -30,7 +30,7 @@
         Eliminar
       </button>
     </div>
-    <button type="button" class="btn btn-outline-success add-car" v-else-if="!edit_access" >
+    <button type="button" class="btn btn-outline-success add-car" v-else-if="!edit_access" @click="try_emit()" >
       + Carrito
     </button>
 

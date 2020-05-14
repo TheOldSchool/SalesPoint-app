@@ -94,7 +94,15 @@ export default {
     },
     substract: async function(key) {
       const input = document.getElementById('sub-' + key);
-      const value = parseFloat(input.value);
+      let value = parseFloat(input.value);
+      for(let i = 0; i < this.list_ingredients.length; i++) {
+        if(this.list_ingredients[i].ingredient == key) {
+          if(this.list_ingredients[i].amount < value) {
+            value = this.list_ingredients[i].amount;
+            break;
+          }
+        }
+      }
       await this.reinventory(key, value);
       input.value = '';
     },
