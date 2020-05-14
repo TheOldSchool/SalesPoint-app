@@ -36,7 +36,7 @@
             <div class="row">
               <div class="col">
                 <input type="number" name="add_amount" class="form-control"
-                  placeholder="5" :id="'add-' + ingredient.key">
+                  placeholder="5" :id="'add-' + ingredient.key" min="0">
               </div>
               <div class="col">
                 <button class="btn btn-success" @click="add(ingredient.key)">+</button>
@@ -47,7 +47,7 @@
             <div class="row">
               <div class="col">
                 <input type="number" name="miss_amount" class="form-control"
-                  placeholder="3" :id="'sub-' + ingredient.key">
+                  placeholder="3" :id="'sub-' + ingredient.key" min="0">
               </div>
               <div class="col">
                 <button class="btn btn-info" @click="substract(ingredient.key)">-</button>
@@ -88,23 +88,31 @@ export default {
     },
     add: async function(key) {
       const input = document.getElementById('add-' + key);
-      const value = -1 * parseFloat(input.value);
-      await this.reinventory(key, value);
-      input.value = '';
+      if(parseFloat(input.value) >= 0) {
+        const value = -1 * parseFloat(input.value);
+        await this.reinventory(key, value);
+        input.value = '';
+      } else {
+        alert('No se aceptan números negativos.');
+      }
     },
     substract: async function(key) {
       const input = document.getElementById('sub-' + key);
-      let value = parseFloat(input.value);
-      for(let i = 0; i < this.list_ingredients.length; i++) {
-        if(this.list_ingredients[i].ingredient == key) {
-          if(this.list_ingredients[i].amount < value) {
-            value = this.list_ingredients[i].amount;
-            break;
+      if(parseFloat(input.value) >= 0) {
+        let value = parseFloat(input.value);
+        for(let i = 0; i < this.list_ingredients.length; i++) {
+          if(this.list_ingredients[i].ingredient == key) {
+            if(this.list_ingredients[i].amount < value) {
+              value = this.list_ingredients[i].amount;
+              break;
+            }
           }
         }
+        await this.reinventory(key, value);
+        input.value = '';
+      } else {
+        alert('No se aceptan números negativos.');
       }
-      await this.reinventory(key, value);
-      input.value = '';
     },
     remove: async function(key) {
       if(confirm('¿Desea eliminar del inventario?')) {
